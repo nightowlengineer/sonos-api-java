@@ -10,7 +10,7 @@ public class SonosUtilityHelper
     /**
      * This method returns true if the collection is null or is empty.
      *
-     * @param collection
+     * @param collection to check if empty
      * @return true | false
      */
     public static boolean isEmpty(final Collection<?> collection)
@@ -25,7 +25,7 @@ public class SonosUtilityHelper
     /**
      * This method returns true of the map is null or is empty.
      *
-     * @param map
+     * @param map to check if empty
      * @return true | false
      */
     public static boolean isEmpty(final Map<?, ?> map)
@@ -40,7 +40,7 @@ public class SonosUtilityHelper
     /**
      * This method returns true if the objet is null.
      *
-     * @param object
+     * @param object to check if null
      * @return true | false
      */
     public static boolean isEmpty(final Object object)
@@ -55,7 +55,7 @@ public class SonosUtilityHelper
     /**
      * This method returns true if the input array is null or its length is zero.
      *
-     * @param array
+     * @param array to check if empty
      * @return true | false
      */
     public static boolean isEmpty(final Object[] array)
@@ -70,7 +70,7 @@ public class SonosUtilityHelper
     /**
      * This method returns true if the input string is null or its length is zero.
      *
-     * @param string
+     * @param string to check if empty
      * @return true | false
      */
     public static boolean isEmpty(final String string)

@@ -1,5 +1,8 @@
 package engineer.nightowl.sonos.api.enums;
 
+/**
+ * <p>SonosErrorCode class.</p>
+ */
 public enum SonosErrorCode implements SonosErrorBase
 {
     ERROR_MISSING_PARAMETERS,

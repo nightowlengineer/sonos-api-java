@@ -9,8 +9,18 @@ import engineer.nightowl.sonos.api.exception.SonosApiError;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Send commands to compatible devices
+ *
+ * @see <a href="https://developer.sonos.com/reference/control-api/hometheater/">Sonos docs</a>
+ */
 public class HomeTheaterResource extends BaseResource
 {
+    /**
+     * <p>Constructor for HomeTheaterResource.</p>
+     *
+     * @param apiClient a {@link engineer.nightowl.sonos.api.SonosApiClient} object.
+     */
     public HomeTheaterResource(final SonosApiClient apiClient)
     {
         super(apiClient);
@@ -19,10 +29,12 @@ public class HomeTheaterResource extends BaseResource
     /**
      * Set the specified player to use its optical or HDMI input.
      *
+     * @see <a href="https://developer.sonos.com/reference/control-api/hometheater/load-home-theater-playback/">Sonos docs</a>
      * @param clientToken for the user
      * @param playerId    to set to home theater mode
      * @return that the action was successful (will always be true, otherwise an exception is thrown)
-     * @throws SonosApiClientException if an error occurs during the call
+     * @throws engineer.nightowl.sonos.api.exception.SonosApiClientException if an error occurs during the call
+     * @throws engineer.nightowl.sonos.api.exception.SonosApiError if there is an error from the API
      */
     public SonosSuccess loadHomeTheater(final String clientToken, final String playerId) throws SonosApiClientException, SonosApiError
     {
@@ -31,15 +43,14 @@ public class HomeTheaterResource extends BaseResource
 
     /**
      * Instruct the specified player to set the attached device to the specified power state using HDMI.
-     * <p>
-     * See the <a href="https://developer.sonos.com/reference/control-api/hometheater/set-tv-power-state/">Sonos API docs</a>
-     * for more information on the return value(s) of this command
      *
+     * @see <a href="https://developer.sonos.com/reference/control-api/hometheater/set-tv-power-state/">Sonos docs</a>
      * @param clientToken  for the user
      * @param playerId     to transmit the power state through
-     * @param tvPowerState chosen {@link SonosTvPowerState}
+     * @param tvPowerState chosen {@link engineer.nightowl.sonos.api.enums.SonosTvPowerState}
      * @return if the client was successful or not (see Sonos docs for how this works)
-     * @throws SonosApiClientException if an error occurs during the call
+     * @throws engineer.nightowl.sonos.api.exception.SonosApiClientException if an error occurs during the call
+     * @throws engineer.nightowl.sonos.api.exception.SonosApiError if there is an error from the API
      */
     public SonosSuccess setTvPowerState(final String clientToken, final String playerId, final SonosTvPowerState tvPowerState) throws SonosApiClientException, SonosApiError
     {

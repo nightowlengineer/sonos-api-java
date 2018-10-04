@@ -35,6 +35,10 @@ class BaseResource
             // error if not specified in the relevant POJO
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .setSerializationInclusion(JsonInclude.Include.NON_NULL);
+    /**
+     * Sonos can provide a header describing the response type
+     * @see engineer.nightowl.sonos.api.enums.SonosType
+     */
     private static final String SONOS_TYPE_HEADER = "X-Sonos-Type";
     private final Logger logger = LoggerFactory.getLogger(getClass());
     SonosApiClient apiClient;
@@ -92,7 +96,7 @@ class BaseResource
         final SonosType sonosDeclaredClass = getTypeFromHeader(response);
         final String sonosDeclaredClassName = sonosDeclaredClass == null ? null : sonosDeclaredClass.getClazz().getSimpleName();
 
-        // If Sonos didn't provide a type, or if one was provided and it matches, proceed
+        // If Sonos didn't provide a type, or if one was provided and it matches what we wanted returned, proceed
         if (sonosDeclaredClassName == null || sonosDeclaredClassName.equals(type.getSimpleName()))
         {
             try
@@ -104,7 +108,7 @@ class BaseResource
                 throw new SonosApiClientException(msg, e);
             }
         }
-        // Otherwise it's likely an error object, in which case throw an exception with the mapped object
+        // Otherwise it's not what we expected - likely an error object, in which case throw an exception with the mapped object
         else
         {
             final Object responseContent;

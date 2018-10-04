@@ -34,7 +34,7 @@ public class SonosApiClient
     /**
      * Main client for Sonos API.
      *
-     * @param configuration - a {@link SonosApiConfiguration} containing integration
+     * @param configuration - a {@link engineer.nightowl.sonos.api.SonosApiConfiguration} containing integration
      *                      information such as API keys
      */
     public SonosApiClient(final SonosApiConfiguration configuration)
@@ -97,6 +97,8 @@ public class SonosApiClient
 
     /**
      * Set a custom HTTP client.
+     *
+     * @param httpClient custom client to set
      */
     public void setHttpClient(final CloseableHttpClient httpClient)
     {
@@ -125,9 +127,9 @@ public class SonosApiClient
     }
 
     /**
-     * Set a new {@link SonosApiConfiguration}.
+     * Set a new {@link engineer.nightowl.sonos.api.SonosApiConfiguration}.
      *
-     * @param configuration - the new {@link SonosApiConfiguration}
+     * @param configuration - the new {@link engineer.nightowl.sonos.api.SonosApiConfiguration}
      */
     public void setConfiguration(final SonosApiConfiguration configuration)
     {
@@ -147,6 +149,8 @@ public class SonosApiClient
 
     /**
      * Manage a household's favorites.
+     *
+     * @return the FavoriteResource
      */
     public FavoriteResource favorite()
     {
@@ -155,6 +159,8 @@ public class SonosApiClient
 
     /**
      * Manage a household's groups.
+     *
+     * @return the GroupResource
      */
     public GroupResource group()
     {
@@ -163,6 +169,8 @@ public class SonosApiClient
 
     /**
      * Manage the volume of a group
+     *
+     * @return the GroupVolumeResource
      */
     public GroupVolumeResource groupVolumeResource()
     {
@@ -171,6 +179,8 @@ public class SonosApiClient
 
     /**
      * Manage home theater features
+     *
+     * @return the HomeTheaterResource
      */
     public HomeTheaterResource homeTheater()
     {
@@ -179,6 +189,8 @@ public class SonosApiClient
 
     /**
      * Manage a user's household(s)
+     *
+     * @return the HouseholdResource
      */
     public HouseholdResource household()
     {
@@ -187,6 +199,8 @@ public class SonosApiClient
 
     /**
      * Match music service accounts
+     *
+     * @return the MusicServiceAccountsResource
      */
     public MusicServiceAccountsResource musicServiceAccounts()
     {
@@ -195,6 +209,8 @@ public class SonosApiClient
 
     /**
      * Subscribe/unsubscribe to playback events
+     *
+     * @return the PlaybackMetadataResource
      */
     public PlaybackMetadataResource playbackMetadata()
     {
@@ -203,6 +219,8 @@ public class SonosApiClient
 
     /**
      * Manage the playback of the system.
+     *
+     * @return the PlaybackResource
      */
     public PlaybackResource playback()
     {
@@ -211,6 +229,8 @@ public class SonosApiClient
 
     /**
      * Manage playback sessions.
+     *
+     * @return the PlaybackSessionResource
      */
     public PlaybackSessionResource playbackSession()
     {
@@ -219,6 +239,8 @@ public class SonosApiClient
 
     /**
      * Manage player volume.
+     *
+     * @return the PlayerVolumeResource
      */
     public PlayerVolumeResource playerVolume()
     {

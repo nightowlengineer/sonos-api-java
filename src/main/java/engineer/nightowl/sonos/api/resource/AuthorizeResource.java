@@ -21,12 +21,17 @@ import java.util.List;
 /**
  * The Authorization flow is dependent on sending your user back to a pre-registered, and user-accessible
  * web service address.
- * <p>
- * Reference: <a href="https://developer.sonos.com/reference/authorization-api/">Authorization API</a>
+ *
+ * @see <a href="https://developer.sonos.com/reference/authorization-api/">Sonos docs</a>
  */
 public class AuthorizeResource extends BaseResource
 {
 
+    /**
+     * <p>Constructor for AuthorizeResource.</p>
+     *
+     * @param apiClient a {@link engineer.nightowl.sonos.api.SonosApiClient} object.
+     */
     public AuthorizeResource(final SonosApiClient apiClient)
     {
         super(apiClient);
@@ -35,11 +40,12 @@ public class AuthorizeResource extends BaseResource
     /**
      * Return the URI that a user needs to visit, in order to begin the OAuth process
      *
+     * @see <a href="https://developer.sonos.com/reference/authorization-api/create-authorization-code/">Sonos docs</a>
      * @param redirectUri - the URI (registered with Sonos in the developer portal) to redirect the user to
      * @param state       - strongly recommended, but ultimately optional, state value to pass to Sonos to reduce
      *                    chance of CSRF
      * @return URI that you should send the user to
-     * @throws URISyntaxException if you've passed something in that's invalid
+     * @throws java.net.URISyntaxException if you've passed something in that's invalid
      */
     public URI getAuthorizeCodeUri(final String redirectUri, final String state) throws URISyntaxException
     {
@@ -65,11 +71,12 @@ public class AuthorizeResource extends BaseResource
     /**
      * Return the URI that a user needs to visit, in order to begin the OAuth process
      *
+     * @see <a href="https://developer.sonos.com/reference/authorization-api/create-authorization-code/">Sonos docs</a>
      * @param redirectUri - the URI (registered with Sonos in the developer portal) to redirect the user to
      * @return URI that you should send the user to
      * @throws URISyntaxException if you've passed something in that's invalid
      */
-    URI getAuthorizeCodeUri(final String redirectUri) throws URISyntaxException
+    public URI getAuthorizeCodeUri(final String redirectUri) throws URISyntaxException
     {
         return getAuthorizeCodeUri(redirectUri, null);
     }
@@ -77,12 +84,15 @@ public class AuthorizeResource extends BaseResource
     /**
      * Generate a token from an authorization code (see getAuthorizeCode methods in the same class)
      *
+     * @see <a href="https://developer.sonos.com/reference/authorization-api/create-token/">Sonos docs</a>
      * @param redirectUri   - the user-accessible web service URI that Sonos will redirect back to
      * @param authorizeCode - an authorization code obtained before calling this method
-     * @return a {@link SonosToken} object containing the user's token information
-     * @throws SonosApiClientException if unable to build the request due to invalid content
+     * @return a {@link engineer.nightowl.sonos.api.domain.SonosToken} object containing the user's token information
+     * @throws engineer.nightowl.sonos.api.exception.SonosApiClientException if unable to build the request due to invalid content
+     * @throws engineer.nightowl.sonos.api.exception.SonosApiError if there is an error generating the token (from Sonos)
      */
-    public SonosToken createToken(final String redirectUri, final String authorizeCode) throws SonosApiClientException, SonosApiError
+    public SonosToken createToken(final String redirectUri, final String authorizeCode) throws SonosApiClientException,
+            SonosApiError
     {
         final SonosApiConfiguration configuration = apiClient.getConfiguration();
         final URIBuilder uri = new URIBuilder();
@@ -123,9 +133,11 @@ public class AuthorizeResource extends BaseResource
     /**
      * Generate a token from a previously issued refresh token
      *
+     * @see <a href="https://developer.sonos.com/reference/authorization-api/refresh-token/">Sonos docs</a>
      * @param refreshToken - the refresh token to use
-     * @return a {@link SonosToken} object containing the user's token information
-     * @throws SonosApiClientException if unable to build the request due to invalid content or the call fails
+     * @return a {@link engineer.nightowl.sonos.api.domain.SonosToken} object containing the user's token information
+     * @throws engineer.nightowl.sonos.api.exception.SonosApiClientException if unable to build the request due to invalid content or the call fails
+     * @throws engineer.nightowl.sonos.api.exception.SonosApiError if there is an error generating the token (from Sonos)
      */
     public SonosToken refreshToken(final String refreshToken) throws SonosApiClientException, SonosApiError
     {

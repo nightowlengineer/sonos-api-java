@@ -31,11 +31,21 @@ public enum SonosType
         this.clazz = clazz;
     }
 
+    /**
+     * <p>getErrorTypes.</p>
+     *
+     * @return a {@link java.util.List} object.
+     */
     public static List<SonosType> getErrorTypes()
     {
         return Arrays.asList(globalError, playbackError, sessionError);
     }
 
+    /**
+     * <p>Getter for the field <code>clazz</code>.</p>
+     *
+     * @return a {@link java.lang.Class} object.
+     */
     public Class getClazz()
     {
         return clazz;
