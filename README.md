@@ -24,7 +24,7 @@ It's also recommended that you have at least one Sonos device to be able to prop
 <dependency>
   <groupId>engineer.nightowl</groupId>
   <artifactId>sonos-api-java</artifactId>
-  <version>0.0.1</version>
+  <version>0.0.2</version>
 </dependency>
 ```
 
