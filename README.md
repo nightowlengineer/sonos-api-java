@@ -46,7 +46,7 @@ Then use the client to view and modify the user's devices - the following types 
   * authorize
   * favorite
   * group
-  * groupVolumeResource
+  * groupVolume
   * homeTheater
   * household
   * musicServiceAccounts
