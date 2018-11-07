@@ -12,6 +12,7 @@ import java.util.Properties;
 public class SonosApiClient
 {
     // Resources
+    private final AudioClipResource audioClipResource;
     private final AuthorizeResource authorizeResource;
     private final FavoriteResource favoriteResource;
     private final GroupResource groupResource;
@@ -48,6 +49,7 @@ public class SonosApiClient
         httpClient = generateHttpClient();
 
         // Setup resources
+        audioClipResource = new AudioClipResource(this);
         authorizeResource = new AuthorizeResource(this);
         favoriteResource = new FavoriteResource(this);
         groupResource = new GroupResource(this);
@@ -136,6 +138,14 @@ public class SonosApiClient
         this.configuration = configuration;
     }
 
+    /**
+     * Schedule audio clips.
+     *
+     * @return the AudioClipResource
+     */
+    public AudioClipResource audioClip() {
+        return audioClipResource;
+    }
 
     /**
      * Authorization methods to connect a user with the Sonos API.
