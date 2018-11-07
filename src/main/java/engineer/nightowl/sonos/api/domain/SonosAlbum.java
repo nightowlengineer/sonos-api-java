@@ -2,8 +2,7 @@ package engineer.nightowl.sonos.api.domain;
 
 import java.net.URI;
 
-class SonosAlbum
-{
+public class SonosAlbum {
     private String name;
     private SonosArtist artist;
     private URI imageUrl;

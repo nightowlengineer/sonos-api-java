@@ -5,8 +5,7 @@ import engineer.nightowl.sonos.api.enums.SonosTag;
 import java.net.URI;
 import java.util.List;
 
-class SonosTrack
-{
+public class SonosTrack {
     private Boolean canCrossfade;
     private Boolean canSkip;
     private Integer durationMillis;
