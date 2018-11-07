@@ -65,7 +65,7 @@ playMode.setCrossfade(true);
 
 for (final SonosGroup group : groups.getGroups())
 {
-	client.playback().setPlayModes("authToken", group.getId(), playMode);
+    client.playback().setPlayModes("authToken", group.getId(), playMode);
 }
 ```
 
