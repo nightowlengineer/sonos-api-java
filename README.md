@@ -24,7 +24,7 @@ It's also recommended that you have at least one Sonos device to be able to prop
 <dependency>
   <groupId>engineer.nightowl</groupId>
   <artifactId>sonos-api-java</artifactId>
-  <version>0.0.2</version>
+  <version>0.0.3</version>
 </dependency>
 ```
 
@@ -43,6 +43,7 @@ final SonosApiClient client = new SonosApiClient(configuration);
 
 Then use the client to view and modify the user's devices - the following types of resource are available:
 
+  * audioClip
   * authorize
   * favorite
   * group
