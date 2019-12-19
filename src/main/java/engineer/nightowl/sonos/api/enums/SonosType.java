@@ -16,6 +16,7 @@ public enum SonosType
     globalError(SonosApiError.class),
     groups(SonosGroups.class),
     groupVolume(SonosGroupVolume.class),
+    homeTheaterOptions(SonosHomeTheaterOptions.class),
     households(SonosHouseholdList.class),
     MusicServiceAccount(SonosMusicServiceAccount.class),
     playbackError(SonosPlaybackError.class),

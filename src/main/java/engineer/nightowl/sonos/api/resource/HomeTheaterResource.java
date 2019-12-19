@@ -1,6 +1,7 @@
 package engineer.nightowl.sonos.api.resource;
 
 import engineer.nightowl.sonos.api.SonosApiClient;
+import engineer.nightowl.sonos.api.domain.SonosHomeTheaterOptions;
 import engineer.nightowl.sonos.api.domain.SonosSuccess;
 import engineer.nightowl.sonos.api.enums.SonosTvPowerState;
 import engineer.nightowl.sonos.api.exception.SonosApiClientException;
@@ -59,5 +60,36 @@ public class HomeTheaterResource extends BaseResource
         payload.put("tvPowerState", tvPowerState);
 
         return postToApi(SonosSuccess.class, clientToken, String.format("/v1/players/%s/homeTheater/tvPowerState", playerId), payload);
+    }
+
+    /**
+     * Get home theater options for a specified player
+     *
+     * @see <a href="https://developer.sonos.com/reference/control-api/hometheater/getoptions/">Sonos docs</a>
+     * @param clientToken for the user
+     * @param playerId to get the options for
+     * @return the home theater options for the specified player
+     * @throws engineer.nightowl.sonos.api.exception.SonosApiClientException if an error occurs during the call
+     * @throws engineer.nightowl.sonos.api.exception.SonosApiError           if the API returns an error
+     */
+    public SonosHomeTheaterOptions getOptions(final String clientToken, final String playerId) throws SonosApiClientException, SonosApiError
+    {
+        return getFromApi(SonosHomeTheaterOptions.class, clientToken, String.format("/v1/players/%s/homeTheater/options", playerId));
+    }
+
+    /**
+     * Set home theater options for a specifier player
+     *
+     * @see <a href="https://developer.sonos.com/reference/control-api/hometheater/setoptions/">Sonos docs</a>
+     * @param clientToken  for the user
+     * @param playerId     to set the options for
+     * @param homeTheaterOptions configured {@link engineer.nightowl.sonos.api.domain.SonosHomeTheaterOptions}
+     * @return the configured options if successful
+     * @throws engineer.nightowl.sonos.api.exception.SonosApiClientException if an error occurs during the call
+     * @throws engineer.nightowl.sonos.api.exception.SonosApiError if there is an error from the API
+     */
+    public SonosHomeTheaterOptions setOptions(final String clientToken, final String playerId, final SonosHomeTheaterOptions homeTheaterOptions) throws SonosApiClientException, SonosApiError
+    {
+        return postToApi(SonosHomeTheaterOptions.class, clientToken, String.format("/v1/players/%s/homeTheater/options", playerId), homeTheaterOptions);
     }
 }
