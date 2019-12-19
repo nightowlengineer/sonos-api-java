@@ -11,6 +11,7 @@ import java.util.List;
  */
 public enum SonosType
 {
+    audioClip(SonosAudioClip.class),
     favoritesList(SonosFavoriteList.class),
     globalError(SonosApiError.class),
     groups(SonosGroups.class),
