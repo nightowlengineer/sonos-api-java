@@ -36,7 +36,7 @@ public class HomeTheaterResource extends BaseResource
      * @throws engineer.nightowl.sonos.api.exception.SonosApiClientException if an error occurs during the call
      * @throws engineer.nightowl.sonos.api.exception.SonosApiError if there is an error from the API
      */
-    public SonosSuccess loadHomeTheater(final String clientToken, final String playerId) throws SonosApiClientException, SonosApiError
+    public SonosSuccess loadHomeTheaterPlayback(final String clientToken, final String playerId) throws SonosApiClientException, SonosApiError
     {
         return postToApi(SonosSuccess.class, clientToken, String.format("/v1/players/%s/homeTheater", playerId));
     }
