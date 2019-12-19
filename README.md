@@ -55,6 +55,8 @@ Then use the client to view and modify the user's devices - the following types 
   * playback
   * playbackSession
   * playerVolume
+  * playlist
+  * settings
 
 For example, to set all 'groups' (aka rooms) to use crossfade when music is playing, you could run the following:
 
@@ -68,9 +70,3 @@ for (final SonosGroup group : groups.getGroups())
     client.playback().setPlayModes("authToken", group.getId(), playMode);
 }
 ```
-
-## Todo
-
-  * Continue to add detailed Javadoc throughout the resources
-  * Add unit testing throughout
-  * Complete manual testing of all available endpoints

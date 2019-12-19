@@ -24,6 +24,8 @@ public class SonosApiClient
     private final PlaybackResource playbackResource;
     private final PlaybackSessionResource playbackSessionResource;
     private final PlayerVolumeResource playerVolumeResource;
+    private final PlaylistResource playlistResource;
+    private final SettingsResource settingsResource;
 
     // Internal classes
     private final Logger logger = LoggerFactory.getLogger(getClass());
@@ -61,6 +63,8 @@ public class SonosApiClient
         playbackResource = new PlaybackResource(this);
         playbackSessionResource = new PlaybackSessionResource(this);
         playerVolumeResource = new PlayerVolumeResource(this);
+        playlistResource = new PlaylistResource(this);
+        settingsResource = new SettingsResource(this);
     }
 
     /**
@@ -255,5 +259,25 @@ public class SonosApiClient
     public PlayerVolumeResource playerVolume()
     {
         return playerVolumeResource;
+    }
+
+    /**
+     * Manage playlists.
+     *
+     * @return the PlaylistResource
+     */
+    public PlaylistResource playlist()
+    {
+        return playlistResource;
+    }
+
+    /**
+     * Manage player settings.
+     *
+     * @return the SettingsResource
+     */
+    public SettingsResource settings()
+    {
+        return settingsResource;
     }
 }
