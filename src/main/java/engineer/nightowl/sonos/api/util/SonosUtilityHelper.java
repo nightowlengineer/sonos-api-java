@@ -38,13 +38,25 @@ public class SonosUtilityHelper
     }
 
     /**
-     * This method returns true if the objet is null.
+     * This method returns true if the object is null.
      *
      * @param object to check if null
      * @return true | false
      */
     public static boolean isEmpty(final Object object)
     {
+        if (object instanceof Map)
+        {
+            return isEmpty((Map) object);
+        }
+        if (object instanceof String)
+        {
+            return isEmpty((String) object);
+        }
+        if (object instanceof Collection)
+        {
+            return isEmpty((Collection) object);
+        }
         if (object == null)
         {
             return true;

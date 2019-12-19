@@ -23,7 +23,9 @@ public class SonosCallbackHelper
     /**
      * Verify that the message was signed by Sonos.
      *
-     * @param headers from the message
+     * @param headers   from the message
+     * @param apiKey    of your integration
+     * @param apiSecret of your integration
      * @return true if the message is cryptographically provable to be from Sonos
      * @throws SonosApiClientException if in an unsupported environment
      */
