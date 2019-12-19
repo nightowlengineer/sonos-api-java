@@ -1,17 +1,13 @@
 package engineer.nightowl.sonos.api.resource;
 
 import engineer.nightowl.sonos.api.SonosApiClient;
-import engineer.nightowl.sonos.api.domain.SonosSuccess;
-import engineer.nightowl.sonos.api.exception.SonosApiClientException;
-import engineer.nightowl.sonos.api.exception.SonosApiError;
-import engineer.nightowl.sonos.api.specs.Subscribable;
 
 /**
  * <p>PlaybackMetadataResource class.</p>
  *
  * @see <a href="https://developer.sonos.com/reference/control-api/playback-metadata/">Sonos docs</a>
  */
-public class PlaybackMetadataResource extends BaseResource implements Subscribable
+public class PlaybackMetadataResource extends SubscribableResource
 {
     /**
      * <p>Constructor for PlaybackMetadataResource.</p>
@@ -25,15 +21,8 @@ public class PlaybackMetadataResource extends BaseResource implements Subscribab
 
     /** {@inheritDoc} */
     @Override
-    public SonosSuccess subscribe(final String clientToken, final String groupId) throws SonosApiClientException, SonosApiError
+    String getSubscriptionPath()
     {
-        return postToApi(SonosSuccess.class, clientToken, String.format("/v1/groups/%s/playbackMetadata/subscription", groupId));
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public SonosSuccess unsubscribe(final String clientToken, final String groupId) throws SonosApiClientException, SonosApiError
-    {
-        return deleteFromApi(SonosSuccess.class, clientToken, String.format("/v1/groups/%s/playbackMetadata/subscription", groupId));
+        return "/v1/groups/%s/playbackMetadata/subscription";
     }
 }

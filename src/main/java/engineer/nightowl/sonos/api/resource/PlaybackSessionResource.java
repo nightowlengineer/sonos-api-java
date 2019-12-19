@@ -1,10 +1,13 @@
 package engineer.nightowl.sonos.api.resource;
 
 import engineer.nightowl.sonos.api.SonosApiClient;
-import engineer.nightowl.sonos.api.domain.*;
+import engineer.nightowl.sonos.api.domain.SonosCloudQueueRequest;
+import engineer.nightowl.sonos.api.domain.SonosPlaybackSessionStatus;
+import engineer.nightowl.sonos.api.domain.SonosSessionRequest;
+import engineer.nightowl.sonos.api.domain.SonosStreamUrlRequest;
+import engineer.nightowl.sonos.api.domain.SonosSuccess;
 import engineer.nightowl.sonos.api.exception.SonosApiClientException;
 import engineer.nightowl.sonos.api.exception.SonosApiError;
-import engineer.nightowl.sonos.api.specs.Subscribable;
 import engineer.nightowl.sonos.api.util.SonosUtilityHelper;
 
 import java.util.HashMap;
@@ -15,7 +18,7 @@ import java.util.Map;
  *
  * @see <a href="https://developer.sonos.com/reference/control-api/playbacksession/">Sonos docs</a>
  */
-public class PlaybackSessionResource extends BaseResource implements Subscribable
+public class PlaybackSessionResource extends SubscribableResource
 {
     /**
      * <p>Constructor for PlaybackSessionResource.</p>
@@ -25,6 +28,13 @@ public class PlaybackSessionResource extends BaseResource implements Subscribabl
     public PlaybackSessionResource(final SonosApiClient apiClient)
     {
         super(apiClient);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    String getSubscriptionPath()
+    {
+        return "/v1/playbackSessions/%s/playbackSession/subscription";
     }
 
     /**
@@ -197,13 +207,6 @@ public class PlaybackSessionResource extends BaseResource implements Subscribabl
         return postToApi(SonosSuccess.class, clientToken, String.format("/v1/playbackSessions/%s/playbackSession/seekRelative", sessionId), payload);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public SonosSuccess subscribe(final String clientToken, final String sessionId) throws SonosApiClientException, SonosApiError
-    {
-        return postToApi(SonosSuccess.class, clientToken, String.format("/v1/playbackSessions/%s/playbackSession/subscription", sessionId));
-    }
-
     /**
      * Suspend a named session (feature appears to still be in development)
      *
@@ -224,12 +227,5 @@ public class PlaybackSessionResource extends BaseResource implements Subscribabl
             payload.put("queueVersion", queueVersion);
         }
         return postToApi(SonosSuccess.class, clientToken, String.format("/v1/playbackSessions/%s/playbackSession/suspend", sessionId), payload);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public SonosSuccess unsubscribe(final String clientToken, final String sessionId) throws SonosApiClientException, SonosApiError
-    {
-        return deleteFromApi(SonosSuccess.class, clientToken, String.format("/v1/playbackSessions/%s/playbackSession/subscription", sessionId));
     }
 }

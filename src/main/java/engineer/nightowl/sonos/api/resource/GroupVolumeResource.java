@@ -5,7 +5,6 @@ import engineer.nightowl.sonos.api.domain.SonosGroupVolume;
 import engineer.nightowl.sonos.api.domain.SonosSuccess;
 import engineer.nightowl.sonos.api.exception.SonosApiClientException;
 import engineer.nightowl.sonos.api.exception.SonosApiError;
-import engineer.nightowl.sonos.api.specs.Subscribable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,7 +14,7 @@ import java.util.Map;
  *
  * @see <a href="https://developer.sonos.com/reference/control-api/group-volume/">Sonos docs</a>
  */
-public class GroupVolumeResource extends BaseResource implements Subscribable
+public class GroupVolumeResource extends SubscribableResource
 {
     /**
      * <p>Constructor for GroupVolumeResource.</p>
@@ -25,6 +24,13 @@ public class GroupVolumeResource extends BaseResource implements Subscribable
     public GroupVolumeResource(final SonosApiClient apiClient)
     {
         super(apiClient);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    String getSubscriptionPath()
+    {
+        return "/v1/groups/%s/groupVolume/subscription";
     }
 
     /**
@@ -97,27 +103,5 @@ public class GroupVolumeResource extends BaseResource implements Subscribable
         final Map<String, Object> payload = new HashMap<>();
         payload.put("muted", isMuted);
         return postToApi(SonosSuccess.class, clientToken, String.format("/v1/groups/%s/groupVolume/mute", groupId), payload);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * Subscribe to volume events for a group
-     */
-    @Override
-    public SonosSuccess subscribe(final String clientToken, final String groupId) throws SonosApiClientException, SonosApiError
-    {
-        return postToApi(SonosSuccess.class, clientToken, String.format("/v1/groups/%s/groupVolume/subscription", groupId));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * Unsubscribe from volume events for a group
-     */
-    @Override
-    public SonosSuccess unsubscribe(final String clientToken, final String groupId) throws SonosApiClientException, SonosApiError
-    {
-        return deleteFromApi(SonosSuccess.class, clientToken, String.format("/v1/groups/%s/groupVolume/subscription", groupId));
     }
 }

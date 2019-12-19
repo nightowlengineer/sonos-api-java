@@ -6,7 +6,6 @@ import engineer.nightowl.sonos.api.domain.SonosPlaybackStatus;
 import engineer.nightowl.sonos.api.domain.SonosSuccess;
 import engineer.nightowl.sonos.api.exception.SonosApiClientException;
 import engineer.nightowl.sonos.api.exception.SonosApiError;
-import engineer.nightowl.sonos.api.specs.Subscribable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,7 +15,7 @@ import java.util.Map;
  *
  * @see <a href="https://developer.sonos.com/reference/control-api/playback/">Sonos docs</a>
  */
-public class PlaybackResource extends BaseResource implements Subscribable
+public class PlaybackResource extends SubscribableResource
 {
     /**
      * <p>Constructor for PlaybackResource.</p>
@@ -26,6 +25,13 @@ public class PlaybackResource extends BaseResource implements Subscribable
     public PlaybackResource(final SonosApiClient apiClient)
     {
         super(apiClient);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    String getSubscriptionPath()
+    {
+        return "/v1/groups/%s/playback/subscription";
     }
 
     /**
@@ -203,13 +209,6 @@ public class PlaybackResource extends BaseResource implements Subscribable
         return postToApi(SonosSuccess.class, clientToken, String.format("/v1/groups/%s/playback/skipToPreviousTrack", groupId));
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public SonosSuccess subscribe(final String clientToken, final String groupId) throws SonosApiClientException, SonosApiError
-    {
-        return postToApi(SonosSuccess.class, clientToken, String.format("/v1/groups/%s/playback/subscription", groupId));
-    }
-
     /**
      * Toggle the play/pause state of a group
      *
@@ -225,12 +224,5 @@ public class PlaybackResource extends BaseResource implements Subscribable
     public SonosSuccess togglePlayPause(final String clientToken, final String groupId) throws SonosApiClientException, SonosApiError
     {
         return postToApi(SonosSuccess.class, clientToken, String.format("/v1/groups/%s/playback/togglePlayPause", groupId));
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public SonosSuccess unsubscribe(final String clientToken, final String groupId) throws SonosApiClientException, SonosApiError
-    {
-        return deleteFromApi(SonosSuccess.class, clientToken, String.format("/v1/groups/%s/playback/subscription", groupId));
     }
 }

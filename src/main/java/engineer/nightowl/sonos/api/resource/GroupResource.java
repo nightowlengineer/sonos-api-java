@@ -1,10 +1,10 @@
 package engineer.nightowl.sonos.api.resource;
 
 import engineer.nightowl.sonos.api.SonosApiClient;
-import engineer.nightowl.sonos.api.domain.*;
+import engineer.nightowl.sonos.api.domain.SonosGroupInfo;
+import engineer.nightowl.sonos.api.domain.SonosGroups;
 import engineer.nightowl.sonos.api.exception.SonosApiClientException;
 import engineer.nightowl.sonos.api.exception.SonosApiError;
-import engineer.nightowl.sonos.api.specs.Subscribable;
 
 import java.util.HashMap;
 import java.util.List;
@@ -17,7 +17,7 @@ import java.util.Map;
  * @see engineer.nightowl.sonos.api.domain.SonosGroup
  * @see engineer.nightowl.sonos.api.domain.SonosGroups
  */
-public class GroupResource extends BaseResource implements Subscribable
+public class GroupResource extends SubscribableResource
 {
     /**
      * <p>Constructor for GroupResource.</p>
@@ -27,6 +27,13 @@ public class GroupResource extends BaseResource implements Subscribable
     public GroupResource(final SonosApiClient apiClient)
     {
         super(apiClient);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    String getSubscriptionPath()
+    {
+        return "/v1/households/%s/groups/subscription";
     }
 
     /**
@@ -116,27 +123,5 @@ public class GroupResource extends BaseResource implements Subscribable
         payload.put("playerIds", playerIds);
 
         return postToApi(SonosGroupInfo.class, clientToken, String.format("/v1/groups/%s/setGroupMembers", groupId), payload);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * Subscribe to group events in a specified household
-     */
-    @Override
-    public SonosSuccess subscribe(final String clientToken, final String householdId) throws SonosApiClientException, SonosApiError
-    {
-        return postToApi(SonosSuccess.class, clientToken, String.format("/v1/households/%s/groups/subscription", householdId));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * Unsubscribe from group events in a specified household
-     */
-    @Override
-    public SonosSuccess unsubscribe(final String clientToken, final String householdId) throws SonosApiClientException, SonosApiError
-    {
-        return deleteFromApi(SonosSuccess.class, clientToken, String.format("/v1/households/%s/groups/subscription", householdId));
     }
 }

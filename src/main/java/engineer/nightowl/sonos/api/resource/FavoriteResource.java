@@ -6,7 +6,6 @@ import engineer.nightowl.sonos.api.domain.SonosPlayMode;
 import engineer.nightowl.sonos.api.domain.SonosSuccess;
 import engineer.nightowl.sonos.api.exception.SonosApiClientException;
 import engineer.nightowl.sonos.api.exception.SonosApiError;
-import engineer.nightowl.sonos.api.specs.Subscribable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,7 +16,7 @@ import java.util.Map;
  * @see <a href="https://developer.sonos.com/reference/control-api/favorites/">Sonos docs</a>
  * @see engineer.nightowl.sonos.api.domain.SonosFavorite
  */
-public class FavoriteResource extends BaseResource implements Subscribable
+public class FavoriteResource extends SubscribableResource
 {
     /**
      * <p>Constructor for FavoriteResource.</p>
@@ -27,6 +26,13 @@ public class FavoriteResource extends BaseResource implements Subscribable
     public FavoriteResource(final SonosApiClient apiClient)
     {
         super(apiClient);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    String getSubscriptionPath()
+    {
+        return "/v1/households/%s/favorites/subscription";
     }
 
     /**
@@ -73,19 +79,5 @@ public class FavoriteResource extends BaseResource implements Subscribable
         payload.put("favoriteId", favoriteId);
 
         return postToApi(SonosSuccess.class, clientToken, String.format("/v1/groups/%s/favorites", groupId), payload);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public SonosSuccess subscribe(final String clientToken, final String householdId) throws SonosApiClientException, SonosApiError
-    {
-        return postToApi(SonosSuccess.class, clientToken, String.format("/v1/households/%s/favorites/subscription", householdId));
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public SonosSuccess unsubscribe(final String clientToken, final String householdId) throws SonosApiClientException, SonosApiError
-    {
-        return deleteFromApi(SonosSuccess.class, clientToken, String.format("/v1/households/%s/favorites/subscription", householdId));
     }
 }

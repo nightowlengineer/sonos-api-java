@@ -5,7 +5,6 @@ import engineer.nightowl.sonos.api.domain.SonosPlayerVolume;
 import engineer.nightowl.sonos.api.domain.SonosSuccess;
 import engineer.nightowl.sonos.api.exception.SonosApiClientException;
 import engineer.nightowl.sonos.api.exception.SonosApiError;
-import engineer.nightowl.sonos.api.specs.Subscribable;
 import engineer.nightowl.sonos.api.util.SonosUtilityHelper;
 
 import java.util.HashMap;
@@ -16,7 +15,7 @@ import java.util.Map;
  *
  * @see <a href="https://developer.sonos.com/reference/control-api/playervolume/">Sonos docs</a>
  */
-public class PlayerVolumeResource extends BaseResource implements Subscribable
+public class PlayerVolumeResource extends SubscribableResource
 {
     /**
      * <p>Constructor for PlayerVolumeResource.</p>
@@ -28,6 +27,12 @@ public class PlayerVolumeResource extends BaseResource implements Subscribable
         super(apiClient);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    String getSubscriptionPath()
+    {
+        return "/v1/players/%s/playerVolume/subscription";
+    }
 
     /**
      * Get the volume properties for the specified player
@@ -109,27 +114,5 @@ public class PlayerVolumeResource extends BaseResource implements Subscribable
             payload.put("muted", isMuted);
         }
         return postToApi(SonosSuccess.class, clientToken, String.format("/v1/players/%s/playerVolume", playerId), payload);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * Subscribe to volume events for a player
-     */
-    @Override
-    public SonosSuccess subscribe(final String clientToken, final String playerId) throws SonosApiClientException, SonosApiError
-    {
-        return postToApi(SonosSuccess.class, clientToken, String.format("/v1/players/%s/playerVolume/subscription", playerId));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * Unsubscribe from volume events for a player
-     */
-    @Override
-    public SonosSuccess unsubscribe(final String clientToken, final String playerId) throws SonosApiClientException, SonosApiError
-    {
-        return deleteFromApi(SonosSuccess.class, clientToken, String.format("/v1/players/%s/playerVolume/subscription", playerId));
     }
 }
