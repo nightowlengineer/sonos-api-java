@@ -46,7 +46,7 @@ public class AudioClipResource extends BaseResource {
      * @return whether the clip was cancelled
      * @throws engineer.nightowl.sonos.api.exception.SonosApiClientException if an error occurs during the call
      * @throws engineer.nightowl.sonos.api.exception.SonosApiError           if there is an error from the API
-     * @see <a href="https://developer.sonos.com/reference/control-api/audioclip/loadaudioclip/">Sonos docs</a>
+     * @see <a href="https://developer.sonos.com/reference/control-api/audioclip/cancelaudioclip/">Sonos docs</a>
      */
     public SonosSuccess cancelAudioClip(final String clientToken, final String playerId, final String clipId)
             throws SonosApiClientException, SonosApiError {
