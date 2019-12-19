@@ -5,7 +5,7 @@
 
     <groupId>engineer.nightowl</groupId>
     <artifactId>sonos-api-java</artifactId>
-    <version>0.0.8-SNAPSHOT</version>
+    <version>0.0.8</version>
     <packaging>jar</packaging>
 
     <name>sonos-api-java</name>
@@ -17,7 +17,7 @@
         <connection>scm:git:git://github.com/nightowlengineer/sonos-api-java.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/nightowlengineer/sonos-api-java.git</developerConnection>
         <url>https://github.com/nightowlengineer/sonos-api-java/tree/master</url>
-        <tag>HEAD</tag>
+        <tag>0.0.8</tag>
     </scm>
 
     <developers>
