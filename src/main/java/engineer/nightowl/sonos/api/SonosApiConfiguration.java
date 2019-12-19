@@ -66,7 +66,7 @@ public class SonosApiConfiguration
         this.apiKey = apiKey;
     }
 
-    private String getApiSecret()
+    public String getApiSecret()
     {
         return apiSecret;
     }
@@ -91,7 +91,7 @@ public class SonosApiConfiguration
         return authBaseUrl;
     }
 
-    private void setAuthBaseUrl(final String authBaseUrl)
+    public void setAuthBaseUrl(final String authBaseUrl)
     {
         this.authBaseUrl = authBaseUrl;
     }
@@ -106,12 +106,12 @@ public class SonosApiConfiguration
         return controlBaseUrl;
     }
 
-    private void setControlBaseUrl(final String controlBaseUrl)
+    public void setControlBaseUrl(final String controlBaseUrl)
     {
         this.controlBaseUrl = controlBaseUrl;
     }
 
-    private void loadDefaults()
+    public void loadDefaults()
     {
         setAuthBaseUrl("api.sonos.com");
         setControlBaseUrl("api.ws.sonos.com/control/api");
