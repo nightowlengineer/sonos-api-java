@@ -1,6 +1,8 @@
 package engineer.nightowl.sonos.api;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.http.Header;
 import org.apache.http.message.BasicHeader;
 
@@ -17,6 +19,7 @@ public class SonosApiConfiguration
     private String apiSecret;
     private String authBaseUrl;
     private String controlBaseUrl;
+    private Boolean clientSideValidationEnabled;
 
     /**
      * <p>Constructor for SonosApiConfiguration.</p>
@@ -111,10 +114,22 @@ public class SonosApiConfiguration
         this.controlBaseUrl = controlBaseUrl;
     }
 
+    public Boolean isClientSideValidationEnabled()
+    {
+        return clientSideValidationEnabled;
+    }
+
+    public void setClientSideValidationEnabled(Boolean clientSideValidationEnabled)
+    {
+        this.clientSideValidationEnabled = clientSideValidationEnabled;
+    }
+
+
     public void loadDefaults()
     {
         setAuthBaseUrl("api.sonos.com");
         setControlBaseUrl("api.ws.sonos.com/control/api");
+        setClientSideValidationEnabled(Boolean.TRUE);
     }
 
     /**
@@ -128,5 +143,50 @@ public class SonosApiConfiguration
         final String authBase64 = Base64.encodeBase64String(authBytes);
         final String headerValue = String.join(" ", "Basic", authBase64);
         return new BasicHeader("Authorization", headerValue);
+    }
+
+    @Override
+    public String toString()
+    {
+        return "SonosApiConfiguration{" +
+                "applicationId='" + applicationId + '\'' +
+                ", apiKey='" + apiKey + '\'' +
+                ", apiSecret='" + apiSecret + '\'' +
+                ", authBaseUrl='" + authBaseUrl + '\'' +
+                ", controlBaseUrl='" + controlBaseUrl + '\'' +
+                ", clientSideValidationEnabled=" + clientSideValidationEnabled +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        SonosApiConfiguration that = (SonosApiConfiguration) o;
+
+        return new EqualsBuilder()
+                .append(applicationId, that.applicationId)
+                .append(apiKey, that.apiKey)
+                .append(apiSecret, that.apiSecret)
+                .append(authBaseUrl, that.authBaseUrl)
+                .append(controlBaseUrl, that.controlBaseUrl)
+                .append(clientSideValidationEnabled, that.clientSideValidationEnabled)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return new HashCodeBuilder(17, 37)
+                .append(applicationId)
+                .append(apiKey)
+                .append(apiSecret)
+                .append(authBaseUrl)
+                .append(controlBaseUrl)
+                .append(clientSideValidationEnabled)
+                .toHashCode();
     }
 }

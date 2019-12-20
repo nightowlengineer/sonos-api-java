@@ -218,9 +218,10 @@ class BaseResource
                        final U content) throws SonosApiClientException, SonosApiError
     {
         final HttpPost request = getPostRequest(token, path);
-        // If the content for the request has the ability to be validated, do so.
+        final Boolean validationEnabled = apiClient.getConfiguration().isClientSideValidationEnabled();
+        // If the content for the request has the ability to be validated, do so if enabled.
         // If the object is invalid, there's no point sending it to the API to be rejected.
-        if (content instanceof Validatable)
+        if (validationEnabled && content instanceof Validatable)
         {
             ((Validatable) content).validate();
         }
