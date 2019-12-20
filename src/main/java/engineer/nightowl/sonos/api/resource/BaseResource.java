@@ -45,7 +45,7 @@ class BaseResource
      *
      * @see engineer.nightowl.sonos.api.enums.SonosType
      */
-    private static final String SONOS_TYPE_HEADER = "X-Sonos-Type";
+    static final String SONOS_TYPE_HEADER = "X-Sonos-Type";
     private final Logger logger = LoggerFactory.getLogger(getClass());
     SonosApiClient apiClient;
 
@@ -118,6 +118,7 @@ class BaseResource
             {
                 throw new SonosApiClientException("Unable to parse error response from Sonos", e);
             }
+
             if (SonosType.getErrorTypes().contains(sonosDeclaredClass))
             {
                 throw (SonosApiError) sonosDeclaredClass.getClazz().cast(responseContent);
@@ -135,7 +136,7 @@ class BaseResource
      * @param response - raw response to fetch the header from
      * @return the {@link SonosType} declared, or null if not found
      */
-    private SonosType getTypeFromHeader(final CloseableHttpResponse response)
+    SonosType getTypeFromHeader(final CloseableHttpResponse response) throws SonosApiClientException
     {
         if (response != null)
         {
@@ -261,7 +262,7 @@ class BaseResource
      * @return a generic request
      * @throws SonosApiClientException if an error occurs building the request
      */
-    private <T extends HttpRequestBase> T getStandardRequest(final Class<T> requestType, final String token,
+    <T extends HttpRequestBase> T getStandardRequest(final Class<T> requestType, final String token,
                                                              final String path) throws SonosApiClientException
     {
         final T request;
@@ -300,7 +301,7 @@ class BaseResource
      * @return a basic GET request
      * @throws SonosApiClientException if an error occurs building the request
      */
-    private HttpGet getGetRequest(final String token, final String path) throws SonosApiClientException
+    HttpGet getGetRequest(final String token, final String path) throws SonosApiClientException
     {
         return getStandardRequest(HttpGet.class, token, path);
     }
@@ -313,7 +314,7 @@ class BaseResource
      * @return a basic DELETE request
      * @throws SonosApiClientException if an error occurs building the request
      */
-    private HttpDelete getDeleteRequest(final String token, final String path) throws SonosApiClientException
+    HttpDelete getDeleteRequest(final String token, final String path) throws SonosApiClientException
     {
         return getStandardRequest(HttpDelete.class, token, path);
     }
@@ -326,7 +327,7 @@ class BaseResource
      * @return a basic POST request
      * @throws SonosApiClientException if an error occurs building the request
      */
-    private HttpPost getPostRequest(final String token, final String path) throws SonosApiClientException
+    HttpPost getPostRequest(final String token, final String path) throws SonosApiClientException
     {
         return getStandardRequest(HttpPost.class, token, path);
     }
