@@ -1,6 +1,8 @@
 language: java
 jdk:
   - openjdk8
+before_cache:
+  - rm -rf $HOME/.m2/repository/engineer/nightowl/sonos-api-java/
 cache:
   directories:
     - $HOME/.m2
