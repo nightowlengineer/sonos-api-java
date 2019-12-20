@@ -142,9 +142,18 @@ class BaseResource
             final Header header = response.getFirstHeader(SONOS_TYPE_HEADER);
             if (header != null && !SonosUtilityHelper.isEmpty(header.getValue()))
             {
-                if (!"none".equalsIgnoreCase(header.getValue()))
+                final String headerValue = header.getValue();
+                if (!"none".equalsIgnoreCase(headerValue))
                 {
-                    return SonosType.valueOf(header.getValue());
+                    try
+                    {
+                        return SonosType.valueOf(headerValue);
+                    }
+                    catch (final IllegalArgumentException iae)
+                    {
+                        final String msg = String.format("Unexpected return type [%s] - please raise a bug", headerValue);
+                        throw new SonosApiClientException(msg, iae);
+                    }
                 }
             }
         }
