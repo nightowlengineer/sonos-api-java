@@ -67,10 +67,7 @@ class BaseResource
      */
     <T> T callApi(final HttpUriRequest request, final Class<T> type) throws SonosApiClientException, SonosApiError
     {
-        if (logger.isDebugEnabled())
-        {
-            logger.debug("Sending request to " + request.getURI());
-        }
+        logger.debug("Sending request to {}", request.getURI());
         final CloseableHttpResponse response;
         try
         {
@@ -92,11 +89,7 @@ class BaseResource
             throw new SonosApiClientException("Unable to convert response body", ioe);
         }
 
-        if (logger.isDebugEnabled())
-        {
-            final String debugMsg = String.format("Raw response from API: %s", new String(bytes));
-            logger.debug(debugMsg);
-        }
+        logger.debug("Raw response from API: {}", new String(bytes));
 
         // Get type from Sonos response - not always possible
         final SonosType sonosDeclaredClass = getTypeFromHeader(response);

@@ -1,6 +1,19 @@
 package engineer.nightowl.sonos.api;
 
-import engineer.nightowl.sonos.api.resource.*;
+import engineer.nightowl.sonos.api.resource.AudioClipResource;
+import engineer.nightowl.sonos.api.resource.AuthorizeResource;
+import engineer.nightowl.sonos.api.resource.FavoriteResource;
+import engineer.nightowl.sonos.api.resource.GroupResource;
+import engineer.nightowl.sonos.api.resource.GroupVolumeResource;
+import engineer.nightowl.sonos.api.resource.HomeTheaterResource;
+import engineer.nightowl.sonos.api.resource.HouseholdResource;
+import engineer.nightowl.sonos.api.resource.MusicServiceAccountsResource;
+import engineer.nightowl.sonos.api.resource.PlaybackMetadataResource;
+import engineer.nightowl.sonos.api.resource.PlaybackResource;
+import engineer.nightowl.sonos.api.resource.PlaybackSessionResource;
+import engineer.nightowl.sonos.api.resource.PlayerVolumeResource;
+import engineer.nightowl.sonos.api.resource.PlaylistResource;
+import engineer.nightowl.sonos.api.resource.SettingsResource;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.slf4j.Logger;
@@ -9,7 +22,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.Properties;
 
-public class SonosApiClient
+public class SonosApiClient implements AutoCloseable
 {
     // Resources
     private final AudioClipResource audioClipResource;
@@ -30,6 +43,7 @@ public class SonosApiClient
     // Internal classes
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final Properties properties = new Properties();
+
     // Can be overridden by implementing applications
     private SonosApiConfiguration configuration;
     private CloseableHttpClient httpClient;
@@ -37,18 +51,30 @@ public class SonosApiClient
     /**
      * Main client for Sonos API.
      *
-     * @param configuration - a {@link engineer.nightowl.sonos.api.SonosApiConfiguration} containing integration
+     * @param configuration a {@link engineer.nightowl.sonos.api.SonosApiConfiguration} containing integration
      *                      information such as API keys
+     *
+     * @see SonosApiClient#SonosApiClient(SonosApiConfiguration, CloseableHttpClient)
      */
     public SonosApiClient(final SonosApiConfiguration configuration)
     {
+        this(configuration, null);
+    }
+
+    /**
+     * Create a client with a custom HTTP client
+     *
+     * @param configuration a {@link engineer.nightowl.sonos.api.SonosApiConfiguration} containing integration
+     *                      information such as API keys
+     * @param httpClient a custom {@link CloseableHttpClient} - if null, a default client is initialised
+     */
+    public SonosApiClient(final SonosApiConfiguration configuration, final CloseableHttpClient httpClient)
+    {
         loadProperties();
-        if (logger.isInfoEnabled())
-        {
-            logger.info("Initialising sonos-api-java:{}", properties.getProperty("sonosapijava.version"));
-        }
+        logger.info("Initialising sonos-api-java:{}", properties.getProperty("sonosapijava.version"));
+
         this.configuration = configuration;
-        httpClient = generateHttpClient();
+        this.httpClient = (httpClient == null ? generateHttpClient() : httpClient);
 
         // Setup resources
         audioClipResource = new AudioClipResource(this);
@@ -74,6 +100,7 @@ public class SonosApiClient
      */
     private CloseableHttpClient generateHttpClient()
     {
+        logger.debug("Using default HttpClient");
         return HttpClientBuilder.create().build();
     }
 
@@ -87,7 +114,7 @@ public class SonosApiClient
             httpClient.close();
         } catch (final IOException ioe)
         {
-            logger.warn("Unable to close HTTP client", ioe);
+            logger.warn("Unable to close HttpClient", ioe);
         }
     }
 
@@ -279,5 +306,15 @@ public class SonosApiClient
     public SettingsResource settings()
     {
         return settingsResource;
+    }
+
+
+    /**
+     * Closes the HttpClient
+     */
+    @Override
+    public void close()
+    {
+       closeHttpClient();
     }
 }
