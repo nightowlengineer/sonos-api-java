@@ -89,7 +89,8 @@ class BaseResource
             throw new SonosApiClientException("Unable to convert response body", ioe);
         }
 
-        logger.debug("Raw response from API: {}", new String(bytes));
+        logger.debug("Raw response from API: {}", response);
+        logger.debug("Raw response content from API: {}", new String(bytes));
 
         // Get type from Sonos response - not always possible
         final SonosType sonosDeclaredClass = getTypeFromHeader(response);
@@ -208,7 +209,7 @@ class BaseResource
      */
     <T> T postToApi(final Class<T> returnType, final String token, final String path) throws SonosApiClientException, SonosApiError
     {
-        return postToApi(returnType, token, path, null);
+        return postToApi(returnType, token, path, new String[0]);
     }
 
     /**
