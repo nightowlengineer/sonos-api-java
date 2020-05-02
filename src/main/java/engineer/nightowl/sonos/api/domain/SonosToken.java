@@ -1,11 +1,12 @@
 package engineer.nightowl.sonos.api.domain;
 
+import java.io.Serializable;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * <p>SonosToken class.</p>
  */
-public class SonosToken
+public class SonosToken implements Serializable
 {
 
     private String accessToken;
