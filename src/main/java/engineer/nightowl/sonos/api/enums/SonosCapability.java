@@ -4,5 +4,5 @@ package engineer.nightowl.sonos.api.enums;
  * <p>SonosCapability class.</p>
  */
 public enum SonosCapability {
-    PLAYBACK, CLOUD, HT_PLAYBACK, HT_POWER_STATE, AIRPLAY, LINE_IN, AUDIO_CLIP
+    PLAYBACK, CLOUD, HT_PLAYBACK, HT_POWER_STATE, AIRPLAY, LINE_IN, AUDIO_CLIP, VOICE, SPEAKER_DETECTION, FIXED_VOLUME
 }
