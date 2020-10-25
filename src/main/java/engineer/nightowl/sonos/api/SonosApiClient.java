@@ -14,12 +14,15 @@ import engineer.nightowl.sonos.api.resource.PlaybackSessionResource;
 import engineer.nightowl.sonos.api.resource.PlayerVolumeResource;
 import engineer.nightowl.sonos.api.resource.PlaylistResource;
 import engineer.nightowl.sonos.api.resource.SettingsResource;
+
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.VersionInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.net.http.HttpClient;
 import java.util.Properties;
 
 public class SonosApiClient implements AutoCloseable
@@ -48,6 +51,8 @@ public class SonosApiClient implements AutoCloseable
     private SonosApiConfiguration configuration;
     private CloseableHttpClient httpClient;
 
+    private final String version;
+
     /**
      * Main client for Sonos API.
      *
@@ -71,10 +76,12 @@ public class SonosApiClient implements AutoCloseable
     public SonosApiClient(final SonosApiConfiguration configuration, final CloseableHttpClient httpClient)
     {
         loadProperties();
-        logger.info("Initialising sonos-api-java:{}", properties.getProperty("sonosapijava.version"));
+        version = properties.getProperty("sonosapijava.version");
+        logger.info("Initialising sonos-api-java:{}", version);
 
         this.configuration = configuration;
         this.httpClient = (httpClient == null ? generateHttpClient() : httpClient);
+        
 
         // Setup resources
         audioClipResource = new AudioClipResource(this);
@@ -93,6 +100,15 @@ public class SonosApiClient implements AutoCloseable
         settingsResource = new SettingsResource(this);
     }
 
+    public String getUserAgent()
+    {
+        final String ahcUa = VersionInfo.getUserAgent("Apache-HttpClient",
+                "org.apache.http.client", HttpClientBuilder.class);
+
+        return String.format("sonos-api-java/%s (applicationId/%s) (httpClient/(%s))",
+                version, configuration.getApplicationId(), ahcUa);
+    }
+
     /**
      * Generate a default HTTP client.
      *
@@ -101,7 +117,7 @@ public class SonosApiClient implements AutoCloseable
     private CloseableHttpClient generateHttpClient()
     {
         logger.debug("Using default HttpClient");
-        return HttpClientBuilder.create().build();
+        return HttpClientBuilder.create().setUserAgent(getUserAgent()).build();
     }
 
     /**

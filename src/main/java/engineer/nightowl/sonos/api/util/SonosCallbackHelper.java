@@ -50,7 +50,7 @@ public class SonosCallbackHelper
 
         final String signature = Base64.getUrlEncoder().withoutPadding().encodeToString(messageDigest.digest());
 
-        logger.debug("Verifying signature: " + signature);
+        logger.debug("Verifying signature: {}", signature);
 
         return signature.equals(headers.get("X-Sonos-Event-Signature"));
     }

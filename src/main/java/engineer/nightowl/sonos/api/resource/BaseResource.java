@@ -11,7 +11,6 @@ import engineer.nightowl.sonos.api.exception.SonosApiClientException;
 import engineer.nightowl.sonos.api.exception.SonosApiError;
 import engineer.nightowl.sonos.api.specs.Validatable;
 import engineer.nightowl.sonos.api.util.SonosUtilityHelper;
-import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
@@ -83,7 +82,7 @@ class BaseResource
         final byte[] bytes;
         try (final InputStream stream = response.getEntity().getContent())
         {
-            bytes = IOUtils.toByteArray(stream);
+            bytes = stream.readAllBytes();
         } catch (final IOException ioe)
         {
             throw new SonosApiClientException("Unable to convert response body", ioe);
