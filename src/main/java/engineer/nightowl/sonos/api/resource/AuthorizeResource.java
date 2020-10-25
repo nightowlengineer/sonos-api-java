@@ -27,7 +27,7 @@ import java.util.List;
 public class AuthorizeResource extends BaseResource
 {
 
-    private final String HTTPS = "https";
+    private static final String HTTPS = "https";
 
     /**
      * <p>Constructor for AuthorizeResource.</p>

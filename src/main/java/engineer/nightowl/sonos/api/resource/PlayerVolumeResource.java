@@ -17,7 +17,7 @@ import java.util.Map;
  */
 public class PlayerVolumeResource extends SubscribableResource
 {
-    private final String MUTED = "muted";
+    private static final String MUTED = "muted";
     /**
      * <p>Constructor for PlayerVolumeResource.</p>
      *
