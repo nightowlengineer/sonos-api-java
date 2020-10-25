@@ -90,7 +90,7 @@ class BaseResource
         }
 
         logger.debug("Raw response from API: {}", response);
-        logger.debug("Raw response content from API: {}", new String(bytes));
+        logger.debug("Raw response content from API: {}", bytes);
 
         // Get type from Sonos response - not always possible
         final SonosType sonosDeclaredClass = getTypeFromHeader(response);
@@ -232,7 +232,7 @@ class BaseResource
         final Boolean validationEnabled = apiClient.getConfiguration().isClientSideValidationEnabled();
         // If the content for the request has the ability to be validated, do so if enabled.
         // If the object is invalid, there's no point sending it to the API to be rejected.
-        if (validationEnabled && content instanceof Validatable)
+        if (Boolean.TRUE.equals(validationEnabled) && content instanceof Validatable)
         {
             ((Validatable) content).validate();
         }

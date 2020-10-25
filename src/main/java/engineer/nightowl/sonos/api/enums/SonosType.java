@@ -26,9 +26,9 @@ public enum SonosType
     sessionStatus(SonosPlaybackSessionStatus.class),
     playerVolume(SonosPlayerVolume.class);
 
-    private final Class clazz;
+    private final Class<?> clazz;
 
-    SonosType(final Class clazz)
+    SonosType(final Class<?> clazz)
     {
         this.clazz = clazz;
     }
@@ -48,7 +48,7 @@ public enum SonosType
      *
      * @return a {@link java.lang.Class} object.
      */
-    public Class getClazz()
+    public Class<?> getClazz()
     {
         return clazz;
     }

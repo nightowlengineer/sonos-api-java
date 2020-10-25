@@ -94,7 +94,6 @@ public class BaseResourceTest
         options.setGroupingLatency(50);
 
         // Mocks
-        final HttpGet req = baseResource.getGetRequest("token123", "some/test");
         final HttpEntity entity = new StringEntity(new ObjectMapper().writeValueAsString(options), ContentType.APPLICATION_JSON);
 
         final CloseableHttpResponse mockedResponse = mock(CloseableHttpResponse.class);
@@ -118,7 +117,6 @@ public class BaseResourceTest
         options.setGroupingLatency(50);
 
         // Mocks
-        final HttpGet req = baseResource.getGetRequest("token123", "some/test");
         final HttpEntity entity = new StringEntity(new ObjectMapper().writeValueAsString(options), ContentType.APPLICATION_JSON);
 
         final CloseableHttpResponse mockedResponse = mock(CloseableHttpResponse.class);
@@ -137,9 +135,6 @@ public class BaseResourceTest
     @Test
     public void testAuthErrorThrown() throws IOException, SonosApiClientException, SonosApiError
     {
-        // Mocks
-        final HttpGet req = baseResource.getGetRequest("token123", "some/test");
-
         final CloseableHttpResponse mockedResponse = mock(CloseableHttpResponse.class);
         final StatusLine sl = new BasicStatusLine(new ProtocolVersion("HTTP", 1, 1), 401, null);
         when(mockedResponse.getStatusLine()).thenReturn(sl);
@@ -163,9 +158,8 @@ public class BaseResourceTest
         error.setErrorCode(SonosErrorCode.ERROR_NOT_CAPABLE);
         error.setReason("Some test information");
 
-        // Mocks
-        final HttpGet req = baseResource.getGetRequest("token123", "some/test");
-        final HttpEntity entity = new StringEntity(new ObjectMapper().writeValueAsString(error), ContentType.APPLICATION_JSON);
+        final HttpEntity entity = new StringEntity(new ObjectMapper().writeValueAsString(error),
+                ContentType.APPLICATION_JSON);
 
         final CloseableHttpResponse mockedResponse = mock(CloseableHttpResponse.class);
         when(mockedResponse.getEntity()).thenReturn(entity);
@@ -194,9 +188,8 @@ public class BaseResourceTest
         options.setEnhanceDialog(true);
         options.setGroupingLatency(50);
 
-        // Mocks
-        final HttpGet req = baseResource.getGetRequest("token123", "some/test");
-        final HttpEntity entity = new StringEntity(new ObjectMapper().writeValueAsString(options), ContentType.APPLICATION_JSON);
+        final HttpEntity entity = new StringEntity(new ObjectMapper().writeValueAsString(options),
+                ContentType.APPLICATION_JSON);
 
         final CloseableHttpResponse mockedResponse = mock(CloseableHttpResponse.class);
         when(mockedResponse.getEntity()).thenReturn(entity);

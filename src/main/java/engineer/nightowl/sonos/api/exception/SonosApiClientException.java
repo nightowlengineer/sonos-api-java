@@ -7,6 +7,8 @@ package engineer.nightowl.sonos.api.exception;
 public class SonosApiClientException extends Exception
 {
 
+    private static final long serialVersionUID = -7303156575625750389L;
+
     SonosApiClientException()
     {
     }

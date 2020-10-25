@@ -7,6 +7,8 @@ import engineer.nightowl.sonos.api.enums.SonosErrorCode;
  */
 public class SonosApiError extends Exception
 {
+
+    private static final long serialVersionUID = 7034540163075468346L;
     private SonosErrorCode errorCode;
     private String reason;
 

@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class SonosToken implements Serializable
 {
-
+    private static final long serialVersionUID = -7489553913061166913L;
     private String accessToken;
     private String tokenType;
     private String refreshToken;
