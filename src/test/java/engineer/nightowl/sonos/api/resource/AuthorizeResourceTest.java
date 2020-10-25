@@ -1,6 +1,6 @@
 package engineer.nightowl.sonos.api.resource;
 
-import engineer.nightowl.sonos.api.BaseTest;
+import engineer.nightowl.sonos.api.BaseTestSetup;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.junit.Assert;
@@ -12,7 +12,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 
-public class AuthorizeResourceTest extends BaseTest
+public class AuthorizeResourceTest extends BaseTestSetup
 {
     private final AuthorizeResource authorizeResource = new AuthorizeResource(apiClient);
 
@@ -31,7 +31,7 @@ public class AuthorizeResourceTest extends BaseTest
         Assert.assertEquals("https", uri.getScheme());
         uri.getQuery();
 
-        final List<NameValuePair> params = URLEncodedUtils.parse(uri, StandardCharsets.UTF_8.name());
+        final List<NameValuePair> params = URLEncodedUtils.parse(uri, StandardCharsets.UTF_8);
         final HashMap<String, String> map = new HashMap<>();
         params.forEach(p -> map.put(p.getName(), p.getValue()));
 

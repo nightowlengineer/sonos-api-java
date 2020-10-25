@@ -269,7 +269,7 @@ class BaseResource
         final T request;
         try
         {
-            request = requestType.newInstance();
+            request = requestType.getDeclaredConstructor().newInstance();
         } catch (final Exception e)
         {
             throw new SonosApiClientException("Unable to create class " + requestType.getSimpleName(), e);
