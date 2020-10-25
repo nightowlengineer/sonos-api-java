@@ -2,7 +2,7 @@ package engineer.nightowl.sonos.api;
 
 import org.junit.BeforeClass;
 
-public class BaseTest
+public class BaseTestSetup
 {
     protected static final SonosApiConfiguration configuration = new SonosApiConfiguration();
 

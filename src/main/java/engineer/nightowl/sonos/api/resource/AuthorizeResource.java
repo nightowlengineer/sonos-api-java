@@ -27,6 +27,8 @@ import java.util.List;
 public class AuthorizeResource extends BaseResource
 {
 
+    private final String HTTPS = "https";
+
     /**
      * <p>Constructor for AuthorizeResource.</p>
      *
@@ -51,7 +53,7 @@ public class AuthorizeResource extends BaseResource
     {
         final SonosApiConfiguration configuration = apiClient.getConfiguration();
         final URIBuilder uri = new URIBuilder();
-        uri.setScheme("https");
+        uri.setScheme(HTTPS);
         uri.setHost(configuration.getAuthBaseUrl());
         uri.setPath("/login/v3/oauth");
         uri.setParameter("client_id", configuration.getApiKey());
@@ -96,7 +98,7 @@ public class AuthorizeResource extends BaseResource
     {
         final SonosApiConfiguration configuration = apiClient.getConfiguration();
         final URIBuilder uri = new URIBuilder();
-        uri.setScheme("https");
+        uri.setScheme(HTTPS);
         uri.setHost(configuration.getAuthBaseUrl());
         uri.setPath("/login/v3/oauth/access");
 
@@ -145,7 +147,7 @@ public class AuthorizeResource extends BaseResource
 
         // Setup URI
         final URIBuilder uri = new URIBuilder();
-        uri.setScheme("https");
+        uri.setScheme(HTTPS);
         uri.setHost(configuration.getAuthBaseUrl());
         uri.setPath("/login/v3/oauth/access");
 

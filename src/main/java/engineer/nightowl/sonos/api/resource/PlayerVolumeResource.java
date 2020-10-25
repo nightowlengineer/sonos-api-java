@@ -17,6 +17,7 @@ import java.util.Map;
  */
 public class PlayerVolumeResource extends SubscribableResource
 {
+    private final String MUTED = "muted";
     /**
      * <p>Constructor for PlayerVolumeResource.</p>
      *
@@ -64,7 +65,7 @@ public class PlayerVolumeResource extends SubscribableResource
     {
         validateNotNull(isMuted);
         final Map<String, Object> payload = new HashMap<>();
-        payload.put("muted", isMuted);
+        payload.put(MUTED, isMuted);
         return postToApi(SonosSuccess.class, clientToken, String.format("/v1/players/%s/playerVolume/mute", playerId), payload);
     }
 
@@ -87,7 +88,7 @@ public class PlayerVolumeResource extends SubscribableResource
         payload.put("volumeDelta", volumeDelta);
         if (!SonosUtilityHelper.isEmpty(isMuted))
         {
-            payload.put("muted", isMuted);
+            payload.put(MUTED, isMuted);
         }
         return postToApi(SonosSuccess.class, clientToken, String.format("/v1/players/%s/playerVolume/relative", playerId), payload);
     }
@@ -111,7 +112,7 @@ public class PlayerVolumeResource extends SubscribableResource
         payload.put("volume", volume);
         if (!SonosUtilityHelper.isEmpty(isMuted))
         {
-            payload.put("muted", isMuted);
+            payload.put(MUTED, isMuted);
         }
         return postToApi(SonosSuccess.class, clientToken, String.format("/v1/players/%s/playerVolume", playerId), payload);
     }
