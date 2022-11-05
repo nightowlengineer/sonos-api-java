@@ -5,7 +5,7 @@
 
     <groupId>engineer.nightowl</groupId>
     <artifactId>sonos-api-java</artifactId>
-    <version>0.0.22</version>
+    <version>0.0.23-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>sonos-api-java</name>
@@ -17,7 +17,7 @@
         <connection>scm:git:git://github.com/nightowlengineer/sonos-api-java.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/nightowlengineer/sonos-api-java.git</developerConnection>
         <url>https://github.com/nightowlengineer/sonos-api-java/tree/master</url>
-        <tag>0.0.22</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <developers>
@@ -55,10 +55,6 @@
         <sonar.organization>nightowlengineer</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
-
-    <prerequisites>
-        <maven>3.2.5</maven>
-    </prerequisites>
 
     <dependencies>
         <dependency>
