@@ -22,7 +22,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.net.http.HttpClient;
 import java.util.Properties;
 
 public class SonosApiClient implements AutoCloseable

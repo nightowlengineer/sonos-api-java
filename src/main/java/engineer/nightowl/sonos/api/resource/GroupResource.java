@@ -93,11 +93,11 @@ public class GroupResource extends SubscribableResource
                                              final List<String> playerIdsToRemove) throws SonosApiClientException, SonosApiError
     {
         final Map<String, Object> payload = new HashMap<>();
-        if (playerIdsToAdd != null && playerIdsToAdd.size() > 0)
+        if (playerIdsToAdd != null && !playerIdsToAdd.isEmpty())
         {
             payload.put("playerIdsToAdd", playerIdsToAdd);
         }
-        if (playerIdsToRemove != null && playerIdsToRemove.size() > 0)
+        if (playerIdsToRemove != null && !playerIdsToRemove.isEmpty())
         {
             payload.put("playerIdsToRemove", playerIdsToRemove);
         }
