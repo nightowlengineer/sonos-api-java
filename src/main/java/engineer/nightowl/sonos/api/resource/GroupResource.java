@@ -102,7 +102,7 @@ public class GroupResource extends SubscribableResource
             payload.put("playerIdsToRemove", playerIdsToRemove);
         }
 
-        return postToApi(SonosGroupInfo.class, clientToken, String.format("/v1/groups/%s/modifyGroupMembers", groupId), payload);
+        return postToApi(SonosGroupInfo.class, clientToken, String.format("/v1/groups/%s/groups/modifyGroupMembers", groupId), payload);
     }
 
     /**
@@ -122,6 +122,6 @@ public class GroupResource extends SubscribableResource
         final Map<String, Object> payload = new HashMap<>();
         payload.put("playerIds", playerIds);
 
-        return postToApi(SonosGroupInfo.class, clientToken, String.format("/v1/groups/%s/setGroupMembers", groupId), payload);
+        return postToApi(SonosGroupInfo.class, clientToken, String.format("/v1/groups/%s/groups/setGroupMembers", groupId), payload);
     }
 }
