@@ -18,31 +18,26 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicStatusLine;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
-import org.mockito.quality.Strictness;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class BaseResourceTest
 {
-    @Rule
-    public MockitoRule rule = MockitoJUnit.rule().strictness(Strictness.STRICT_STUBS);
-
     private static BaseResource baseResource;
     private static SonosApiClient client;
     private static SonosApiConfiguration configuration;
     private static CloseableHttpClient mockedClient;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUp() throws Exception
     {
         client = mock(SonosApiClient.class);
@@ -56,18 +51,18 @@ public class BaseResourceTest
     }
 
     @Test
-    public void getTypeFromHeader() throws SonosApiClientException
+    void getTypeFromHeader() throws SonosApiClientException
     {
         final CloseableHttpResponse response = mock(CloseableHttpResponse.class);
         when(response.getFirstHeader(BaseResource.SONOS_TYPE_HEADER))
                 .thenReturn(new BasicHeader(BaseResource.SONOS_TYPE_HEADER, "homeTheaterOptions"));
         final SonosType type = baseResource.getTypeFromHeader(response);
 
-        Assert.assertEquals(SonosType.homeTheaterOptions, type);
+        assertEquals(SonosType.homeTheaterOptions, type);
     }
 
     @Test
-    public void getInvalidTypeFromHeader() throws SonosApiClientException
+    void getInvalidTypeFromHeader() throws SonosApiClientException
     {
         final CloseableHttpResponse response = mock(CloseableHttpResponse.class);
         when(response.getFirstHeader(BaseResource.SONOS_TYPE_HEADER))
@@ -76,16 +71,16 @@ public class BaseResourceTest
         try
         {
             baseResource.getTypeFromHeader(response);
-            Assert.fail("Did not fail as expected");
+            fail("Did not fail as expected");
         }
         catch(SonosApiClientException sace)
         {
-            Assert.assertEquals(IllegalArgumentException.class, sace.getCause().getClass());
+            assertEquals(IllegalArgumentException.class, sace.getCause().getClass());
         }
     }
 
     @Test
-    public void testThatMainApiCallWorks() throws IOException, SonosApiClientException, SonosApiError
+    void testThatMainApiCallWorks() throws IOException, SonosApiClientException, SonosApiError
     {
         // Test data
         final SonosHomeTheaterOptions options = new SonosHomeTheaterOptions();
@@ -104,11 +99,11 @@ public class BaseResourceTest
         final SonosHomeTheaterOptions responseOptions = baseResource.getFromApi(SonosHomeTheaterOptions.class,
                 "token123", "some/test");
 
-        Assert.assertEquals(options, responseOptions);
+        assertEquals(options, responseOptions);
     }
 
     @Test
-    public void testSonosNotDeclaringTypeStillWorks() throws IOException, SonosApiClientException, SonosApiError
+    void testSonosNotDeclaringTypeStillWorks() throws IOException, SonosApiClientException, SonosApiError
     {
         // Test data
         final SonosHomeTheaterOptions options = new SonosHomeTheaterOptions();
@@ -129,11 +124,11 @@ public class BaseResourceTest
         final SonosHomeTheaterOptions responseOptions = baseResource.getFromApi(SonosHomeTheaterOptions.class,
                 "token123", "some/test");
 
-        Assert.assertEquals(options, responseOptions);
+        assertEquals(options, responseOptions);
     }
 
     @Test
-    public void testAuthErrorThrown() throws IOException, SonosApiClientException, SonosApiError
+    void testAuthErrorThrown() throws IOException, SonosApiClientException, SonosApiError
     {
         final CloseableHttpResponse mockedResponse = mock(CloseableHttpResponse.class);
         final StatusLine sl = new BasicStatusLine(new ProtocolVersion("HTTP", 1, 1), 401, null);
@@ -142,16 +137,16 @@ public class BaseResourceTest
         try
         {
             baseResource.getFromApi(SonosHomeTheaterOptions.class, "token123", "some/test");
-            Assert.fail("Did not handle error response correctly");
+            fail("Did not handle error response correctly");
         }
         catch (final SonosApiClientException e)
         {
-            Assert.assertEquals("Invalid token", e.getMessage());
+            assertEquals("Invalid token", e.getMessage());
         }
     }
 
     @Test
-    public void testApiErrorHandledCorrectly() throws IOException, SonosApiClientException, SonosApiError
+    void testApiErrorHandledCorrectly() throws IOException, SonosApiClientException, SonosApiError
     {
         // Test data
         final SonosApiError error = new SonosApiError();
@@ -171,16 +166,16 @@ public class BaseResourceTest
         try
         {
             baseResource.getFromApi(SonosHomeTheaterOptions.class, "token123", "some/test");
-            Assert.fail("Did not handle error response correctly");
+            fail("Did not handle error response correctly");
         }
         catch (final SonosApiError e)
         {
-            Assert.assertEquals(SonosErrorCode.ERROR_NOT_CAPABLE, e.getErrorCode());
+            assertEquals(SonosErrorCode.ERROR_NOT_CAPABLE, e.getErrorCode());
         }
     }
 
     @Test
-    public void testApiMismatchHandledCorrectly() throws IOException, SonosApiClientException, SonosApiError
+    void testApiMismatchHandledCorrectly() throws IOException, SonosApiClientException, SonosApiError
     {
         // Test data
         final SonosHomeTheaterOptions options = new SonosHomeTheaterOptions();
@@ -201,55 +196,55 @@ public class BaseResourceTest
         try
         {
             baseResource.getFromApi(SonosHomeTheaterOptions.class, "token123", "some/test");
-            Assert.fail("Did not handle error response correctly");
+            fail("Did not handle error response correctly");
         }
         catch (final SonosApiClientException e)
         {
-            Assert.assertEquals("Sonos declared SonosAudioClip as the response type, but the integration requested SonosHomeTheaterOptions", e.getMessage());
+            assertEquals("Sonos declared SonosAudioClip as the response type, but the integration requested SonosHomeTheaterOptions", e.getMessage());
         }
     }
 
     @Test
-    public void getStandardRequest() throws SonosApiClientException
+    void getStandardRequest() throws SonosApiClientException
     {
         final HttpGet req = baseResource.getStandardRequest(HttpGet.class, "token123", "/some/path");
-        Assert.assertEquals(HttpGet.METHOD_NAME,
+        assertEquals(HttpGet.METHOD_NAME,
                 req.getMethod());
 
-        Assert.assertEquals("Bearer token123",
+        assertEquals("Bearer token123",
                 req.getFirstHeader("Authorization").getValue());
 
-        Assert.assertEquals(
+        assertEquals(
                 "/control/api/some/path",
                 req.getURI().getPath());
     }
 
     @Test
-    public void testValidateNotNullNoFieldName() throws SonosApiClientException
+    void testValidateNotNullNoFieldName() throws SonosApiClientException
     {
         baseResource.validateNotNull("nonEmptyString");
     }
 
-    @Test(expected=SonosApiClientException.class)
-    public void testValidateNotNullBothNulls() throws SonosApiClientException
+    @Test
+    void testValidateNotNullBothNulls()
     {
-        baseResource.validateNotNull(null, null);
-    }
-
-    @Test(expected=SonosApiClientException.class)
-    public void testValidateNotNullObjectNull() throws SonosApiClientException
-    {
-        baseResource.validateNotNull(null, "sonos-api-java");
-    }
-
-    @Test(expected=SonosApiClientException.class)
-    public void testValidateNotNullEmptyObject() throws SonosApiClientException
-    {
-        baseResource.validateNotNull("", "sonos-api-java");
+        assertThrows(SonosApiClientException.class, () -> baseResource.validateNotNull(null, null));
     }
 
     @Test
-    public void testValidateNotNullNonEmptyObject() throws SonosApiClientException
+    void testValidateNotNullObjectNull()
+    {
+        assertThrows(SonosApiClientException.class, () -> baseResource.validateNotNull(null, "sonos-api-java"));
+    }
+
+    @Test
+    void testValidateNotNullEmptyObject()
+    {
+        assertThrows(SonosApiClientException.class, () -> baseResource.validateNotNull("", "sonos-api-java"));
+    }
+
+    @Test
+    void testValidateNotNullNonEmptyObject() throws SonosApiClientException
     {
         baseResource.validateNotNull("nonEmptyString", "sonos-api-java");
     }

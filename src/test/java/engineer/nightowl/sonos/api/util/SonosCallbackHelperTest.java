@@ -2,14 +2,16 @@ package engineer.nightowl.sonos.api.util;
 
 import engineer.nightowl.sonos.api.exception.SonosApiClientException;
 import org.apache.http.entity.ContentType;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SonosCallbackHelperTest
+class SonosCallbackHelperTest
 {
     final String apiKey = "sonos";
     final String apiSecret = "secret";
@@ -43,14 +45,14 @@ public class SonosCallbackHelperTest
     }
 
     @Test
-    public void testVerifySignatureWithValidHeaders() throws SonosApiClientException, NoSuchAlgorithmException
+    void testVerifySignatureWithValidHeaders() throws SonosApiClientException, NoSuchAlgorithmException
     {
-        Assert.assertTrue(SonosCallbackHelper.verifySignature(getValidHeaders(), apiKey, apiSecret));
+        assertTrue(SonosCallbackHelper.verifySignature(getValidHeaders(), apiKey, apiSecret));
     }
 
     @Test
-    public void testVerifySignatureWithInvalidHeaders() throws SonosApiClientException, NoSuchAlgorithmException
+    void testVerifySignatureWithInvalidHeaders() throws SonosApiClientException, NoSuchAlgorithmException
     {
-        Assert.assertFalse(SonosCallbackHelper.verifySignature(getInvalidHeaders(), apiKey, apiSecret));
+        assertFalse(SonosCallbackHelper.verifySignature(getInvalidHeaders(), apiKey, apiSecret));
     }
 }

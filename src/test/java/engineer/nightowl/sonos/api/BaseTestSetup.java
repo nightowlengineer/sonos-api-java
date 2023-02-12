@@ -1,6 +1,6 @@
 package engineer.nightowl.sonos.api;
 
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.BeforeAll;
 
 public class BaseTestSetup
 {
@@ -8,8 +8,8 @@ public class BaseTestSetup
 
     protected final SonosApiClient apiClient = new SonosApiClient(configuration);
 
-    @BeforeClass
-    public static void setup()
+    @BeforeAll
+    static void setup()
     {
         configuration.setApiKey("testApiKey");
         configuration.setApiSecret("testApiSecret");
