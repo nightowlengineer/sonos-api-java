@@ -5,6 +5,7 @@ public enum SonosClipState
     ACTIVE("Currently playing"),
     DISMISSED("Dismissed"),
     DONE("Playback complete"),
+    INACTIVE("Inactive"), // Not currently documented by Sonos
     INTERRUPTED("Playback interrupted, for example, by a high priority audio clip"),
     PENDING("Scheduled for playback, but not active");
 

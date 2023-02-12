@@ -15,6 +15,7 @@ public enum SonosType
     favoritesList(SonosFavoriteList.class),
     globalError(SonosApiError.class),
     groups(SonosGroups.class),
+    groupInfo(SonosGroupInfo.class),
     groupVolume(SonosGroupVolume.class),
     homeTheaterOptions(SonosHomeTheaterOptions.class),
     households(SonosHouseholdList.class),
