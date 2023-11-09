@@ -2,23 +2,27 @@ package engineer.nightowl.sonos.api.util;
 
 import engineer.nightowl.sonos.api.SonosApiClient;
 import engineer.nightowl.sonos.api.exception.SonosApiClientException;
-import org.apache.http.Header;
-import org.apache.http.HttpMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
 import java.util.Base64;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+
+import java.net.http.HttpHeaders;
+import java.net.http.HttpResponse;
 
 public class SonosCallbackHelper
 {
     private static final Logger logger = LoggerFactory.getLogger(SonosCallbackHelper.class);
+
+    private SonosCallbackHelper()
+    {
+        // Empty private constructor
+    }
 
     /**
      * Verify that the message was signed by Sonos.
@@ -29,8 +33,14 @@ public class SonosCallbackHelper
      * @return true if the message is cryptographically provable to be from Sonos
      * @throws SonosApiClientException if in an unsupported environment
      */
-    public static Boolean verifySignature(final Map<String, String> headers, final String apiKey, final String apiSecret) throws SonosApiClientException
+    public static Boolean verifySignature(final HttpHeaders headers, final String apiKey, final String apiSecret) throws SonosApiClientException
     {
+        final Optional<String> sentSignature = headers.firstValue("X-Sonos-Event-Signature");
+        if (!sentSignature.isPresent())
+        {
+            throw new SonosApiClientException("No signature present in header, ending early.");
+        }
+
         MessageDigest messageDigest = null;
         try
         {
@@ -40,42 +50,35 @@ public class SonosCallbackHelper
             throw new SonosApiClientException("Unsupported execution environment", e);
         }
 
-        messageDigest.update(headers.get("X-Sonos-Event-Seq-Id").getBytes(UTF_8));
-        messageDigest.update(headers.get("X-Sonos-Namespace").getBytes(UTF_8));
-        messageDigest.update(headers.get("X-Sonos-Type").getBytes(UTF_8));
-        messageDigest.update(headers.get("X-Sonos-Target-Type").getBytes(UTF_8));
-        messageDigest.update(headers.get("X-Sonos-Target-Value").getBytes(UTF_8));
+        if (headers.map().keySet().containsAll(SignatureHeader.getAllHeaders()))
+        {
+            for (SignatureHeader key : SignatureHeader.values())
+            {
+                final Optional<String> value = headers.firstValue(key.getHeaderKey());
+                if (value.isPresent())
+                {
+                    messageDigest.update(value.get().getBytes(UTF_8));
+                }
+            }
+        }
+
         messageDigest.update(apiKey.getBytes(UTF_8));
-        messageDigest.update(apiSecret.getBytes(UTF_8));
+        messageDigest.update(apiSecret.getBytes(UTF_8));        
 
         final String signature = Base64.getUrlEncoder().withoutPadding().encodeToString(messageDigest.digest());
 
         logger.debug("Verifying signature: {}", signature);
 
-        return signature.equals(headers.get("X-Sonos-Event-Signature"));
+        return signature.equals(sentSignature.get());
     }
 
-    public static Boolean verifySignature(final Map<String, String> headers, final SonosApiClient apiClient) throws SonosApiClientException
+    public static Boolean verifySignature(final HttpResponse<Object> response, final SonosApiClient apiClient) throws SonosApiClientException
     {
-        return SonosCallbackHelper.verifySignature(headers, apiClient.getConfiguration().getApiKey(), apiClient.getConfiguration().getApiSecret());
+        return SonosCallbackHelper.verifySignature(response.headers(), apiClient.getConfiguration().getApiKey(), apiClient.getConfiguration().getApiSecret());
     }
 
-    public static Boolean verifySignature(final HttpMessage message, final SonosApiClient apiClient) throws SonosApiClientException
+    public static Boolean verifySignature(final HttpResponse<Object> response, final String apiKey, final String apiSecret) throws SonosApiClientException
     {
-        return SonosCallbackHelper.verifySignature(message, apiClient.getConfiguration().getApiKey(), apiClient.getConfiguration().getApiSecret());
-    }
-
-    public static Boolean verifySignature(final HttpMessage message, final String apiKey, final String apiSecret) throws SonosApiClientException
-    {
-        // Map of headers - Name, Value
-        Map<String, String> headers = convertHeadersToMap(message.getAllHeaders());
-        return SonosCallbackHelper.verifySignature(headers, apiKey, apiSecret);
-    }
-
-    public static Map<String, String> convertHeadersToMap(final Header[] headers)
-    {
-        return Arrays
-                .stream(headers)
-                .collect(Collectors.toMap(Header::getName, Header::getValue));
+        return SonosCallbackHelper.verifySignature(response.headers(), apiKey, apiSecret);
     }
 }

@@ -1,13 +1,11 @@
 package engineer.nightowl.sonos.api;
 
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.http.Header;
-import org.apache.http.message.BasicHeader;
+import java.util.Base64;
+import java.util.Objects;
 
 /**
- * Configuration class to be built up and passed into a {@link engineer.nightowl.sonos.api.SonosApiClient}
+ * Configuration class to be built up and passed into a
+ * {@link engineer.nightowl.sonos.api.SonosApiClient}
  * <p>
  * Loads defaults on construction.
  */
@@ -21,172 +19,92 @@ public class SonosApiConfiguration
     private String controlBaseUrl;
     private Boolean clientSideValidationEnabled;
 
-    /**
-     * <p>Constructor for SonosApiConfiguration.</p>
-     */
-    public SonosApiConfiguration()
-    {
+    public SonosApiConfiguration() {
         loadDefaults();
     }
 
-    /**
-     * <p>Getter for the field <code>applicationId</code>.</p>
-     *
-     * @return a {@link java.lang.String} object.
-     */
-    public String getApplicationId()
-    {
+    public String getApplicationId() {
         return applicationId;
     }
 
-    /**
-     * <p>Setter for the field <code>applicationId</code>.</p>
-     *
-     * @param applicationId a {@link java.lang.String} object.
-     */
-    public void setApplicationId(final String applicationId)
-    {
+    public void setApplicationId(final String applicationId) {
         this.applicationId = applicationId;
     }
 
-    /**
-     * <p>Getter for the field <code>apiKey</code>.</p>
-     *
-     * @return a {@link java.lang.String} object.
-     */
-    public String getApiKey()
-    {
+    public String getApiKey() {
         return apiKey;
     }
 
-    /**
-     * <p>Setter for the field <code>apiKey</code>.</p>
-     *
-     * @param apiKey a {@link java.lang.String} object.
-     */
-    public void setApiKey(final String apiKey)
-    {
+    public void setApiKey(final String apiKey) {
         this.apiKey = apiKey;
     }
 
-    public String getApiSecret()
-    {
+    public String getApiSecret() {
         return apiSecret;
     }
 
-    /**
-     * <p>Setter for the field <code>apiSecret</code>.</p>
-     *
-     * @param apiSecret a {@link java.lang.String} object.
-     */
-    public void setApiSecret(final String apiSecret)
-    {
+    public void setApiSecret(final String apiSecret) {
         this.apiSecret = apiSecret;
     }
 
-    /**
-     * <p>Getter for the field <code>authBaseUrl</code>.</p>
-     *
-     * @return a {@link java.lang.String} object.
-     */
-    public String getAuthBaseUrl()
-    {
+    public String getAuthBaseUrl() {
         return authBaseUrl;
     }
 
-    public void setAuthBaseUrl(final String authBaseUrl)
-    {
+    public void setAuthBaseUrl(final String authBaseUrl) {
         this.authBaseUrl = authBaseUrl;
     }
 
-    /**
-     * <p>Getter for the field <code>controlBaseUrl</code>.</p>
-     *
-     * @return a {@link java.lang.String} object.
-     */
-    public String getControlBaseUrl()
-    {
+    public String getControlBaseUrl() {
         return controlBaseUrl;
     }
 
-    public void setControlBaseUrl(final String controlBaseUrl)
-    {
+    public void setControlBaseUrl(final String controlBaseUrl) {
         this.controlBaseUrl = controlBaseUrl;
     }
 
-    public Boolean isClientSideValidationEnabled()
-    {
+    public Boolean isClientSideValidationEnabled() {
         return clientSideValidationEnabled;
     }
 
-    public void setClientSideValidationEnabled(Boolean clientSideValidationEnabled)
-    {
+    public void setClientSideValidationEnabled(Boolean clientSideValidationEnabled) {
         this.clientSideValidationEnabled = clientSideValidationEnabled;
     }
 
-
-    public void loadDefaults()
-    {
+    public void loadDefaults() {
         setAuthBaseUrl("api.sonos.com");
         setControlBaseUrl("api.ws.sonos.com/control/api");
         setClientSideValidationEnabled(Boolean.TRUE);
     }
 
-    /**
-     * <p>getAuthorizationHeader.</p>
-     *
-     * @return a {@link org.apache.http.Header} object.
-     */
-    public Header getAuthorizationHeader()
-    {
+    public String getAuthorizationHeaderValue() {
         final byte[] authBytes = String.join(":", getApiKey(), getApiSecret()).getBytes();
-        final String authBase64 = Base64.encodeBase64String(authBytes);
-        final String headerValue = String.join(" ", "Basic", authBase64);
-        return new BasicHeader("Authorization", headerValue);
+        final String authBase64 = Base64.getEncoder().encodeToString(authBytes);
+        return String.join(" ", "Basic", authBase64);
     }
 
     @Override
-    public String toString()
-    {
-        return "SonosApiConfiguration{" +
-                "applicationId='" + applicationId + '\'' +
-                ", apiKey='" + apiKey + '\'' +
-                ", apiSecret='" + apiSecret + '\'' +
-                ", authBaseUrl='" + authBaseUrl + '\'' +
-                ", controlBaseUrl='" + controlBaseUrl + '\'' +
-                ", clientSideValidationEnabled=" + clientSideValidationEnabled +
-                '}';
+    public String toString() {
+        return "SonosApiConfiguration [apiKey=" + apiKey + ", apiSecret=" + apiSecret + ", applicationId="
+                + applicationId + ", authBaseUrl=" + authBaseUrl + ", clientSideValidationEnabled="
+                + clientSideValidationEnabled + ", controlBaseUrl=" + controlBaseUrl + "]";
     }
 
     @Override
-    public boolean equals(Object o)
-    {
-        if (this == o) return true;
-
-        if (o == null || getClass() != o.getClass()) return false;
-
-        SonosApiConfiguration that = (SonosApiConfiguration) o;
-
-        return new EqualsBuilder()
-                .append(applicationId, that.applicationId)
-                .append(apiKey, that.apiKey)
-                .append(apiSecret, that.apiSecret)
-                .append(authBaseUrl, that.authBaseUrl)
-                .append(controlBaseUrl, that.controlBaseUrl)
-                .append(clientSideValidationEnabled, that.clientSideValidationEnabled)
-                .isEquals();
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!(obj instanceof SonosApiConfiguration))
+            return false;
+        SonosApiConfiguration other = (SonosApiConfiguration) obj;
+        return Objects.equals(apiKey, other.apiKey) && Objects.equals(apiSecret, other.apiSecret)
+                && Objects.equals(applicationId, other.applicationId) && Objects.equals(authBaseUrl, other.authBaseUrl)
+                && Objects.equals(clientSideValidationEnabled, other.clientSideValidationEnabled)
+                && Objects.equals(controlBaseUrl, other.controlBaseUrl);
     }
 
     @Override
-    public int hashCode()
-    {
-        return new HashCodeBuilder(17, 37)
-                .append(applicationId)
-                .append(apiKey)
-                .append(apiSecret)
-                .append(authBaseUrl)
-                .append(controlBaseUrl)
-                .append(clientSideValidationEnabled)
-                .toHashCode();
+    public int hashCode() {
+        return Objects.hash(apiKey, apiSecret, applicationId, authBaseUrl, clientSideValidationEnabled, controlBaseUrl);
     }
 }
