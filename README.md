@@ -5,7 +5,7 @@ This library provides a simple integration with the Sonos API, allowing you to c
 Please note that this library is currently still in development. Some aspects (particularly with the SMAPI) cannot be tested
 due to a lack of access, others due to not owning devices with specific features.
 
-[![Build Status](https://travis-ci.org/nightowlengineer/sonos-api-java.svg?branch=master)](https://travis-ci.org/nightowlengineer/sonos-api-java)
+[![Build](https://github.com/nightowlengineer/sonos-api-java/actions/workflows/build.yml/badge.svg)](https://github.com/nightowlengineer/sonos-api-java/actions/workflows/build.yml)
 
 ## Prerequisites
 
