@@ -16,7 +16,7 @@ jobs:
       - name: Setup up JDK
         uses: actions/setup-java@v5.4.0
         with:
-          java-version: 17
+          java-version: 25
           cache: 'maven'
           distribution: 'temurin'
       - name: Build and analyze
