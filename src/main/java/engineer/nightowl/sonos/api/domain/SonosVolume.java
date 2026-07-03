@@ -1,6 +1,6 @@
 package engineer.nightowl.sonos.api.domain;
 
-abstract class SonosVolume extends SonosDomainObject
+abstract class SonosVolume
 {
     private Integer volume;
     private Boolean muted;
