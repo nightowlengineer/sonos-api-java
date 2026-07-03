@@ -228,7 +228,7 @@ public class SonosApiClient implements AutoCloseable
      *
      * @return the GroupVolumeResource
      */
-    public GroupVolumeResource groupVolumeResource()
+    public GroupVolumeResource groupVolume()
     {
         return groupVolumeResource;
     }
