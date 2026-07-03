@@ -1,6 +1,7 @@
 package engineer.nightowl.sonos.api.resource;
 
 import engineer.nightowl.sonos.api.BaseTestSetup;
+import engineer.nightowl.sonos.api.exception.SonosApiClientException;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.junit.jupiter.api.Test;
@@ -8,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
@@ -18,14 +18,14 @@ class AuthorizeResourceTest extends BaseTestSetup
     private final AuthorizeResource authorizeResource = new AuthorizeResource(apiClient);
 
     @Test
-    public void testGetAuthorizeCodeUri() throws URISyntaxException
+    public void testGetAuthorizeCodeUri() throws SonosApiClientException
     {
         final URI uri = authorizeResource.getAuthorizeCodeUri("https://localhost");
         assertEquals("https", uri.getScheme());
     }
 
     @Test
-    public void testGetAuthorizeCodeWithState() throws URISyntaxException
+    public void testGetAuthorizeCodeWithState() throws SonosApiClientException
     {
         final String state = authorizeResource.generateStateValue();
         final URI uri = authorizeResource.getAuthorizeCodeUri("https://localhost", state);

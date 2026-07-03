@@ -47,9 +47,9 @@ public class AuthorizeResource extends BaseResource
      * @param state       - strongly recommended, but ultimately optional, state value to pass to Sonos to reduce
      *                    chance of CSRF
      * @return URI that you should send the user to
-     * @throws java.net.URISyntaxException if you've passed something in that's invalid
+     * @throws engineer.nightowl.sonos.api.exception.SonosApiClientException if you've passed something in that's invalid
      */
-    public URI getAuthorizeCodeUri(final String redirectUri, final String state) throws URISyntaxException
+    public URI getAuthorizeCodeUri(final String redirectUri, final String state) throws SonosApiClientException
     {
         final SonosApiConfiguration configuration = apiClient.getConfiguration();
         final URIBuilder uri = new URIBuilder();
@@ -67,7 +67,13 @@ public class AuthorizeResource extends BaseResource
             uri.setParameter("state", state);
         }
 
-        return uri.build();
+        try
+        {
+            return uri.build();
+        } catch (final URISyntaxException e)
+        {
+            throw new SonosApiClientException("Invalid URI built", e);
+        }
     }
 
     /**
@@ -76,9 +82,9 @@ public class AuthorizeResource extends BaseResource
      * @see <a href="https://developer.sonos.com/reference/authorization-api/create-authorization-code/">Sonos docs</a>
      * @param redirectUri - the URI (registered with Sonos in the developer portal) to redirect the user to
      * @return URI that you should send the user to
-     * @throws URISyntaxException if you've passed something in that's invalid
+     * @throws engineer.nightowl.sonos.api.exception.SonosApiClientException if you've passed something in that's invalid
      */
-    public URI getAuthorizeCodeUri(final String redirectUri) throws URISyntaxException
+    public URI getAuthorizeCodeUri(final String redirectUri) throws SonosApiClientException
     {
         return getAuthorizeCodeUri(redirectUri, null);
     }
@@ -96,40 +102,12 @@ public class AuthorizeResource extends BaseResource
     public SonosToken createToken(final String redirectUri, final String authorizeCode) throws SonosApiClientException,
             SonosApiError
     {
-        final SonosApiConfiguration configuration = apiClient.getConfiguration();
-        final URIBuilder uri = new URIBuilder();
-        uri.setScheme(HTTPS);
-        uri.setHost(configuration.getAuthBaseUrl());
-        uri.setPath("/login/v3/oauth/access");
-
-        final BasicNameValuePair redirectUriParameter = new BasicNameValuePair("redirect_uri", redirectUri);
-        final BasicNameValuePair code = new BasicNameValuePair("code", authorizeCode);
-        final BasicNameValuePair grantType = new BasicNameValuePair("grant_type", "authorization_code");
-        final HttpPost request = new HttpPost();
-
         final List<BasicNameValuePair> postParameters = new ArrayList<>();
-        postParameters.add(redirectUriParameter);
-        postParameters.add(code);
-        postParameters.add(grantType);
+        postParameters.add(new BasicNameValuePair("redirect_uri", redirectUri));
+        postParameters.add(new BasicNameValuePair("code", authorizeCode));
+        postParameters.add(new BasicNameValuePair("grant_type", "authorization_code"));
 
-        try
-        {
-            request.setEntity(new UrlEncodedFormEntity(postParameters));
-        } catch (final UnsupportedEncodingException e)
-        {
-            throw new SonosApiClientException("Unable to generate auth request content", e);
-        }
-        request.setHeader(configuration.getAuthorizationHeader());
-
-        try
-        {
-            request.setURI(uri.build());
-        } catch (final URISyntaxException e)
-        {
-            throw new SonosApiClientException("Invalid URI built", e);
-        }
-
-        return callApi(request, SonosToken.class);
+        return callApi(buildOauthAccessRequest(postParameters), SonosToken.class);
     }
 
     /**
@@ -143,22 +121,30 @@ public class AuthorizeResource extends BaseResource
      */
     public SonosToken refreshToken(final String refreshToken) throws SonosApiClientException, SonosApiError
     {
-        final SonosApiConfiguration configuration = apiClient.getConfiguration();
+        final List<BasicNameValuePair> postParameters = new ArrayList<>();
+        postParameters.add(new BasicNameValuePair("refresh_token", refreshToken));
+        postParameters.add(new BasicNameValuePair("grant_type", "refresh_token"));
 
-        // Setup URI
+        return callApi(buildOauthAccessRequest(postParameters), SonosToken.class);
+    }
+
+    /**
+     * Build a POST request to the shared OAuth "access" endpoint (used for both {@link #createToken} and
+     * {@link #refreshToken}), authenticated via the integration's Basic auth header rather than a Bearer token.
+     *
+     * @param postParameters form parameters for the request body
+     * @return the built request, ready to execute via {@link #callApi}
+     * @throws SonosApiClientException if the request could not be built
+     */
+    private HttpPost buildOauthAccessRequest(final List<BasicNameValuePair> postParameters) throws SonosApiClientException
+    {
+        final SonosApiConfiguration configuration = apiClient.getConfiguration();
         final URIBuilder uri = new URIBuilder();
         uri.setScheme(HTTPS);
         uri.setHost(configuration.getAuthBaseUrl());
         uri.setPath("/login/v3/oauth/access");
 
-        // Setup POST contents
         final HttpPost request = new HttpPost();
-        final BasicNameValuePair refreshTokenParameter = new BasicNameValuePair("refresh_token", refreshToken);
-        final BasicNameValuePair grantType = new BasicNameValuePair("grant_type", "refresh_token");
-        final List<BasicNameValuePair> postParameters = new ArrayList<>();
-        postParameters.add(refreshTokenParameter);
-        postParameters.add(grantType);
-
         try
         {
             request.setEntity(new UrlEncodedFormEntity(postParameters));
@@ -166,11 +152,8 @@ public class AuthorizeResource extends BaseResource
         {
             throw new SonosApiClientException("Unable to generate auth request content", e);
         }
-
-        // Set authorization header
         request.setHeader(configuration.getAuthorizationHeader());
 
-        // Execute request
         try
         {
             request.setURI(uri.build());
@@ -179,7 +162,7 @@ public class AuthorizeResource extends BaseResource
             throw new SonosApiClientException("Invalid URI built", e);
         }
 
-        return callApi(request, SonosToken.class);
+        return request;
     }
 
     /**
