@@ -1,5 +1,7 @@
 package engineer.nightowl.sonos.api.exception;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import engineer.nightowl.sonos.api.enums.SonosErrorBase;
 import engineer.nightowl.sonos.api.enums.SonosErrorCode;
 
 /**
@@ -9,7 +11,7 @@ public class SonosApiError extends Exception
 {
 
     private static final long serialVersionUID = 7034540163075468346L;
-    private SonosErrorCode errorCode;
+    private SonosErrorBase errorCode;
     private String reason;
 
     /**
@@ -34,9 +36,11 @@ public class SonosApiError extends Exception
     /**
      * <p>Getter for the field <code>errorCode</code>.</p>
      *
-     * @return a {@link engineer.nightowl.sonos.api.enums.SonosErrorCode} object.
+     * @return a {@link engineer.nightowl.sonos.api.enums.SonosErrorBase} object - subclasses (e.g.
+     * {@link engineer.nightowl.sonos.api.domain.SonosPlaybackError}, {@link engineer.nightowl.sonos.api.domain.SonosSessionError})
+     * override this with a covariant return type for their own error-code enum.
      */
-    public SonosErrorCode getErrorCode()
+    public SonosErrorBase getErrorCode()
     {
         return errorCode;
     }
@@ -44,9 +48,16 @@ public class SonosApiError extends Exception
     /**
      * <p>Setter for the field <code>errorCode</code>.</p>
      *
-     * @param errorCode a {@link engineer.nightowl.sonos.api.enums.SonosErrorCode} object.
+     * <p>{@code SonosErrorCode} is used as the deserialization target here (via {@code @JsonDeserialize(as=...)})
+     * since this is the concrete type used for a plain (non-subclassed) {@code SonosApiError}, i.e. a
+     * {@link engineer.nightowl.sonos.api.enums.SonosType#globalError}. Subclasses that need a different
+     * concrete error-code enum override this method and mark it {@code @JsonIgnore}, providing their own
+     * concretely-typed setter instead.</p>
+     *
+     * @param errorCode a {@link engineer.nightowl.sonos.api.enums.SonosErrorBase} object.
      */
-    public void setErrorCode(final SonosErrorCode errorCode)
+    @JsonDeserialize(as = SonosErrorCode.class)
+    public void setErrorCode(final SonosErrorBase errorCode)
     {
         this.errorCode = errorCode;
     }
@@ -75,7 +86,7 @@ public class SonosApiError extends Exception
     @Override
     public String toString()
     {
-        return "SonosGlobalError{" +
+        return getClass().getSimpleName() + "{" +
                 "errorCode=" + errorCode +
                 ", reason='" + reason + '\'' +
                 '}';
