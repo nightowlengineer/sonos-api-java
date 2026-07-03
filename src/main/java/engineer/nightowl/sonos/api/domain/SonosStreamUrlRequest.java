@@ -1,11 +1,14 @@
 package engineer.nightowl.sonos.api.domain;
 
+import engineer.nightowl.sonos.api.exception.SonosApiClientException;
+import engineer.nightowl.sonos.api.specs.Validatable;
+
 import java.net.URI;
 
 /**
  * <p>SonosStreamUrlRequest class.</p>
  */
-public class SonosStreamUrlRequest
+public class SonosStreamUrlRequest implements Validatable
 {
     private String itemId;
     private URI streamUrl;
@@ -125,5 +128,19 @@ public class SonosStreamUrlRequest
                 ", playOnCompletion=" + playOnCompletion +
                 ", stationMetadata=" + stationMetadata +
                 '}';
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * Per Sonos docs, {@code streamUrl} is the only strictly required field for {@code loadStreamUrl}.
+     */
+    @Override
+    public void validate() throws SonosApiClientException
+    {
+        if (streamUrl == null)
+        {
+            throw new SonosApiClientException("streamUrl cannot be null when loading a stream URL");
+        }
     }
 }

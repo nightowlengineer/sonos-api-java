@@ -1,11 +1,14 @@
 package engineer.nightowl.sonos.api.domain;
 
+import engineer.nightowl.sonos.api.exception.SonosApiClientException;
+import engineer.nightowl.sonos.api.specs.Validatable;
+
 import java.net.URI;
 
 /**
  * <p>SonosCloudQueueRequest class.</p>
  */
-public class SonosCloudQueueRequest
+public class SonosCloudQueueRequest implements Validatable
 {
     private String httpAuthorization;
     private String itemId;
@@ -221,5 +224,19 @@ public class SonosCloudQueueRequest
                 ", trackMetadata=" + trackMetadata +
                 ", useHttpAuthorizationForMedia=" + useHttpAuthorizationForMedia +
                 '}';
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * Per Sonos docs, {@code queueBaseUrl} is the only strictly required field for {@code loadCloudQueue}.
+     */
+    @Override
+    public void validate() throws SonosApiClientException
+    {
+        if (queueBaseUrl == null)
+        {
+            throw new SonosApiClientException("queueBaseUrl cannot be null when loading a cloud queue");
+        }
     }
 }

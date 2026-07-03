@@ -4,17 +4,21 @@ import engineer.nightowl.sonos.api.enums.SonosAudioClipErrorCode;
 import engineer.nightowl.sonos.api.enums.SonosClipState;
 import engineer.nightowl.sonos.api.enums.SonosClipType;
 import engineer.nightowl.sonos.api.enums.SonosPriority;
+import engineer.nightowl.sonos.api.exception.SonosApiClientException;
+import engineer.nightowl.sonos.api.specs.Validatable;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <p>SonosAudioClip domain object</p>
  *
  * @see <a href="https://developer.sonos.com/reference/control-api/audioclip/audioclip/">Sonos docs</a>
  */
-public class SonosAudioClip {
+public class SonosAudioClip implements Validatable {
     private String id;
     private String name;
     private String appId;
@@ -204,5 +208,34 @@ public class SonosAudioClip {
                 .append(streamUrl)
                 .append(volume)
                 .toHashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * Per Sonos docs, {@code name}, {@code appId} and {@code priority} are required when scheduling a new
+     * audio clip via {@code loadAudioClip} - {@code id} and {@code status} are populated by Sonos in the
+     * response and are not required here.
+     */
+    @Override
+    public void validate() throws SonosApiClientException
+    {
+        final List<String> validationErrors = new ArrayList<>();
+        if (name == null)
+        {
+            validationErrors.add("name cannot be null when loading an audio clip");
+        }
+        if (appId == null)
+        {
+            validationErrors.add("appId cannot be null when loading an audio clip");
+        }
+        if (priority == null)
+        {
+            validationErrors.add("priority cannot be null when loading an audio clip");
+        }
+        if (!validationErrors.isEmpty())
+        {
+            throw new SonosApiClientException(validationErrors);
+        }
     }
 }
