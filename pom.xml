@@ -5,7 +5,7 @@
 
     <groupId>engineer.nightowl</groupId>
     <artifactId>sonos-api-java</artifactId>
-    <version>0.2.1</version>
+    <version>0.2.2-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>sonos-api-java</name>
