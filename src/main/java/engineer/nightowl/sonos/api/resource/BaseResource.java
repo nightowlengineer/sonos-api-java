@@ -70,7 +70,20 @@ class BaseResource
         final byte[] bytes = response.body();
 
         logger.debug("Raw response from API: {}", response);
-        logger.debug("Raw response content from API: {}", bytes);
+        if (logger.isDebugEnabled())
+        {
+            // A token response body contains OAuth access/refresh tokens - never write those to logs,
+            // even at debug. Other bodies are decoded as text (logging the raw byte[] would just print
+            // its identity hash, which is useless).
+            if (isTokenResponse(request))
+            {
+                logger.debug("Raw response content from API: <redacted - token response>");
+            }
+            else
+            {
+                logger.debug("Raw response content from API: {}", new String(bytes, StandardCharsets.UTF_8));
+            }
+        }
 
         // Get type from Sonos response - not always possible
         final SonosType sonosDeclaredClass = getTypeFromHeader(response);
@@ -320,6 +333,19 @@ class BaseResource
     HttpRequest getDeleteRequest(final String token, final String path) throws SonosApiClientException
     {
         return getStandardRequest(token, path).DELETE().build();
+    }
+
+    /**
+     * Whether a request targets the OAuth token endpoint, whose response body carries access/refresh
+     * tokens that must be kept out of logs.
+     *
+     * @param request the request being made
+     * @return true if this is a token request
+     */
+    private static boolean isTokenResponse(final HttpRequest request)
+    {
+        final String path = request.uri().getPath();
+        return path != null && path.contains("/oauth/access");
     }
 
     /**
