@@ -47,6 +47,9 @@ public class SonosApiClient implements AutoCloseable
     // Can be overridden by implementing applications
     private SonosApiConfiguration configuration;
     private HttpClient httpClient;
+    // Whether this client created the HttpClient itself (and may therefore close it). A caller-supplied
+    // client is owned by the caller and must not be closed on our behalf.
+    private boolean httpClientOwned;
 
     private final String version;
 
@@ -77,8 +80,17 @@ public class SonosApiClient implements AutoCloseable
         logger.info("Initialising sonos-api-java:{}", version);
 
         this.configuration = configuration;
-        this.httpClient = (httpClient == null ? generateHttpClient() : httpClient);
-        
+        if (httpClient == null)
+        {
+            this.httpClient = generateHttpClient();
+            this.httpClientOwned = true;
+        }
+        else
+        {
+            this.httpClient = httpClient;
+            this.httpClientOwned = false;
+        }
+
 
         // Setup resources
         audioClipResource = new AudioClipResource(this);
@@ -122,11 +134,20 @@ public class SonosApiClient implements AutoCloseable
     }
 
     /**
-     * Close the HTTP client.
+     * Close the HTTP client, but only if this instance created it. A caller-supplied {@link HttpClient}
+     * is owned by the caller (it may be shared elsewhere), so it is left open; close it yourself via
+     * {@link #getHttpClient()} if required.
      */
     public void closeHttpClient()
     {
-        httpClient.close();
+        if (httpClientOwned)
+        {
+            httpClient.close();
+        }
+        else
+        {
+            logger.debug("Not closing caller-supplied HttpClient");
+        }
     }
 
     /**
@@ -147,6 +168,8 @@ public class SonosApiClient implements AutoCloseable
     public void setHttpClient(final HttpClient httpClient)
     {
         this.httpClient = httpClient;
+        // A client set after construction is caller-supplied and must not be closed on their behalf.
+        this.httpClientOwned = false;
     }
 
     private void loadProperties()
