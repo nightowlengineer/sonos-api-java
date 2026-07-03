@@ -24,6 +24,7 @@ abstract class SubscribableResource extends BaseResource implements Subscribable
     @Override
     public SonosSuccess subscribe(final String clientToken, final String resourceId) throws SonosApiClientException, SonosApiError
     {
+        validateNotNull(resourceId, "resourceId");
         return postToApi(SonosSuccess.class, clientToken, String.format(getSubscriptionPath(), resourceId));
     }
 
@@ -31,6 +32,7 @@ abstract class SubscribableResource extends BaseResource implements Subscribable
     @Override
     public SonosSuccess unsubscribe(final String clientToken, final String resourceId) throws SonosApiClientException, SonosApiError
     {
+        validateNotNull(resourceId, "resourceId");
         return deleteFromApi(SonosSuccess.class, clientToken, String.format(getSubscriptionPath(), resourceId));
     }
 }
