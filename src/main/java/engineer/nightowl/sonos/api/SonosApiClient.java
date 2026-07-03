@@ -111,9 +111,14 @@ public class SonosApiClient implements AutoCloseable
     private HttpClient generateHttpClient()
     {
         logger.debug("Using default HttpClient");
-        return HttpClient.newBuilder()
-                .followRedirects(HttpClient.Redirect.NORMAL)
-                .build();
+        final HttpClient.Builder builder = HttpClient.newBuilder()
+                .followRedirects(HttpClient.Redirect.NORMAL);
+        final var connectTimeout = configuration.getConnectTimeout();
+        if (connectTimeout != null && !connectTimeout.isZero() && !connectTimeout.isNegative())
+        {
+            builder.connectTimeout(connectTimeout);
+        }
+        return builder.build();
     }
 
     /**
