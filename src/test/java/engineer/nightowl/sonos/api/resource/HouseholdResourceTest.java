@@ -1,7 +1,7 @@
 package engineer.nightowl.sonos.api.resource;
 
 import engineer.nightowl.sonos.api.domain.SonosHouseholdList;
-import org.apache.http.client.methods.HttpUriRequest;
+import java.net.http.HttpRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -24,7 +24,7 @@ class HouseholdResourceTest extends MockedApiTestSetup
 
         resource.getHouseholds("token123");
 
-        final HttpUriRequest sent = captureRequest();
-        assertEquals("/control/api/v1/households", sent.getURI().getPath());
+        final HttpRequest sent = captureRequest();
+        assertEquals("/control/api/v1/households", sent.uri().getPath());
     }
 }

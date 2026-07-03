@@ -3,7 +3,7 @@ package engineer.nightowl.sonos.api.resource;
 import engineer.nightowl.sonos.api.domain.SonosMusicServiceAccount;
 import engineer.nightowl.sonos.api.domain.SonosMusicServiceAccountMatchRequest;
 import engineer.nightowl.sonos.api.exception.SonosApiClientException;
-import org.apache.http.client.methods.HttpUriRequest;
+import java.net.http.HttpRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -29,8 +29,8 @@ class MusicServiceAccountsResourceTest extends MockedApiTestSetup
 
         resource.match("token123", "household1", request);
 
-        final HttpUriRequest sent = captureRequest();
-        assertEquals("/control/api/v1/households/household1/musicServiceAccounts/match", sent.getURI().getPath());
+        final HttpRequest sent = captureRequest();
+        assertEquals("/control/api/v1/households/household1/musicServiceAccounts/match", sent.uri().getPath());
     }
 
     @Test

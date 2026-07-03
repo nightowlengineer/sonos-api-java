@@ -3,7 +3,7 @@ package engineer.nightowl.sonos.api.resource;
 import engineer.nightowl.sonos.api.domain.SonosGroupInfo;
 import engineer.nightowl.sonos.api.domain.SonosGroups;
 import engineer.nightowl.sonos.api.exception.SonosApiClientException;
-import org.apache.http.client.methods.HttpUriRequest;
+import java.net.http.HttpRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -30,8 +30,8 @@ class GroupResourceTest extends MockedApiTestSetup
 
         resource.getGroups("token123", "household1");
 
-        final HttpUriRequest sent = captureRequest();
-        assertEquals("/control/api/v1/households/household1/groups", sent.getURI().getPath());
+        final HttpRequest sent = captureRequest();
+        assertEquals("/control/api/v1/households/household1/groups", sent.uri().getPath());
     }
 
     @Test
@@ -48,8 +48,8 @@ class GroupResourceTest extends MockedApiTestSetup
 
         resource.createGroup("token123", "household1", playerIds, null);
 
-        final HttpUriRequest sent = captureRequest();
-        assertEquals("/control/api/v1/households/household1/groups/createGroup", sent.getURI().getPath());
+        final HttpRequest sent = captureRequest();
+        assertEquals("/control/api/v1/households/household1/groups/createGroup", sent.uri().getPath());
     }
 
     @Test
@@ -73,8 +73,8 @@ class GroupResourceTest extends MockedApiTestSetup
 
         resource.modifyGroupMembers("token123", "group1", Collections.singletonList("player1"), null);
 
-        final HttpUriRequest sent = captureRequest();
-        assertEquals("/control/api/v1/groups/group1/groups/modifyGroupMembers", sent.getURI().getPath());
+        final HttpRequest sent = captureRequest();
+        assertEquals("/control/api/v1/groups/group1/groups/modifyGroupMembers", sent.uri().getPath());
     }
 
     @Test
@@ -98,8 +98,8 @@ class GroupResourceTest extends MockedApiTestSetup
 
         resource.setGroupMembers("token123", "group1", Collections.singletonList("player1"));
 
-        final HttpUriRequest sent = captureRequest();
-        assertEquals("/control/api/v1/groups/group1/groups/setGroupMembers", sent.getURI().getPath());
+        final HttpRequest sent = captureRequest();
+        assertEquals("/control/api/v1/groups/group1/groups/setGroupMembers", sent.uri().getPath());
     }
 
     @Test

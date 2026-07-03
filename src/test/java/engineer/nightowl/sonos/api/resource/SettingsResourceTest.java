@@ -3,7 +3,7 @@ package engineer.nightowl.sonos.api.resource;
 import engineer.nightowl.sonos.api.domain.SonosPlayerSettings;
 import engineer.nightowl.sonos.api.domain.SonosSuccess;
 import engineer.nightowl.sonos.api.exception.SonosApiClientException;
-import org.apache.http.client.methods.HttpUriRequest;
+import java.net.http.HttpRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -27,7 +27,7 @@ class SettingsResourceTest extends MockedApiTestSetup
 
         resource.getSettings("token123", "player1");
 
-        assertEquals("/control/api/v1/players/player1/settings/player", captureRequest().getURI().getPath());
+        assertEquals("/control/api/v1/players/player1/settings/player", captureRequest().uri().getPath());
     }
 
     @Test
@@ -43,7 +43,7 @@ class SettingsResourceTest extends MockedApiTestSetup
 
         resource.setSettings("token123", "player1", new SonosPlayerSettings());
 
-        assertEquals("/control/api/v1/players/player1/settings/player", captureRequest().getURI().getPath());
+        assertEquals("/control/api/v1/players/player1/settings/player", captureRequest().uri().getPath());
     }
 
     @Test

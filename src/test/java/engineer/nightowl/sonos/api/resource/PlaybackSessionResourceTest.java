@@ -6,7 +6,7 @@ import engineer.nightowl.sonos.api.domain.SonosSessionRequest;
 import engineer.nightowl.sonos.api.domain.SonosStreamUrlRequest;
 import engineer.nightowl.sonos.api.domain.SonosSuccess;
 import engineer.nightowl.sonos.api.exception.SonosApiClientException;
-import org.apache.http.client.methods.HttpUriRequest;
+import java.net.http.HttpRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -34,7 +34,7 @@ class PlaybackSessionResourceTest extends MockedApiTestSetup
 
         resource.createSession("token123", "group1", sessionRequest);
 
-        assertEquals("/control/api/v1/groups/group1/playbackSession", captureRequest().getURI().getPath());
+        assertEquals("/control/api/v1/groups/group1/playbackSession", captureRequest().uri().getPath());
     }
 
     @Test
@@ -50,7 +50,7 @@ class PlaybackSessionResourceTest extends MockedApiTestSetup
 
         resource.joinSession("token123", "group1", sessionRequest);
 
-        assertEquals("/control/api/v1/groups/group1/playbackSession/join", captureRequest().getURI().getPath());
+        assertEquals("/control/api/v1/groups/group1/playbackSession/join", captureRequest().uri().getPath());
     }
 
     @Test
@@ -66,7 +66,7 @@ class PlaybackSessionResourceTest extends MockedApiTestSetup
 
         resource.joinOrCreateSession("token123", "group1", sessionRequest);
 
-        assertEquals("/control/api/v1/groups/group1/playbackSession/joinOrCreate", captureRequest().getURI().getPath());
+        assertEquals("/control/api/v1/groups/group1/playbackSession/joinOrCreate", captureRequest().uri().getPath());
     }
 
     @Test
@@ -86,7 +86,7 @@ class PlaybackSessionResourceTest extends MockedApiTestSetup
         resource.loadCloudQueue("token123", "session1", request);
 
         assertEquals("/control/api/v1/playbackSessions/session1/playbackSession/loadCloudQueue",
-                captureRequest().getURI().getPath());
+                captureRequest().uri().getPath());
     }
 
     @Test
@@ -108,7 +108,7 @@ class PlaybackSessionResourceTest extends MockedApiTestSetup
         resource.loadStreamUrl("token123", "session1", request);
 
         assertEquals("/control/api/v1/playbackSessions/session1/playbackSession/loadStreamUrl",
-                captureRequest().getURI().getPath());
+                captureRequest().uri().getPath());
     }
 
     @Test
@@ -128,7 +128,7 @@ class PlaybackSessionResourceTest extends MockedApiTestSetup
         resource.refreshCloudQueue("token123", "session1");
 
         assertEquals("/control/api/v1/playbackSessions/session1/playbackSession/refreshCloudQueue",
-                captureRequest().getURI().getPath());
+                captureRequest().uri().getPath());
     }
 
     @Test
@@ -145,7 +145,7 @@ class PlaybackSessionResourceTest extends MockedApiTestSetup
         resource.skipToItem("token123", "session1", sessionRequest);
 
         assertEquals("/control/api/v1/playbackSessions/session1/playbackSession/skipToItem",
-                captureRequest().getURI().getPath());
+                captureRequest().uri().getPath());
     }
 
     @Test
@@ -162,7 +162,7 @@ class PlaybackSessionResourceTest extends MockedApiTestSetup
         resource.seek("token123", "session1", "item1", 1000);
 
         assertEquals("/control/api/v1/playbackSessions/session1/playbackSession/seek",
-                captureRequest().getURI().getPath());
+                captureRequest().uri().getPath());
     }
 
     @Test
@@ -185,7 +185,7 @@ class PlaybackSessionResourceTest extends MockedApiTestSetup
         resource.seekRelative("token123", "session1", "item1", 1000);
 
         assertEquals("/control/api/v1/playbackSessions/session1/playbackSession/seekRelative",
-                captureRequest().getURI().getPath());
+                captureRequest().uri().getPath());
     }
 
     @Test
@@ -202,7 +202,7 @@ class PlaybackSessionResourceTest extends MockedApiTestSetup
         resource.suspend("token123", "session1", "v1");
 
         assertEquals("/control/api/v1/playbackSessions/session1/playbackSession/suspend",
-                captureRequest().getURI().getPath());
+                captureRequest().uri().getPath());
     }
 
     @Test

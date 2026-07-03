@@ -15,13 +15,11 @@ import engineer.nightowl.sonos.api.resource.PlayerVolumeResource;
 import engineer.nightowl.sonos.api.resource.PlaylistResource;
 import engineer.nightowl.sonos.api.resource.SettingsResource;
 
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.util.VersionInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.net.http.HttpClient;
 import java.util.Properties;
 
 public class SonosApiClient implements AutoCloseable
@@ -48,7 +46,7 @@ public class SonosApiClient implements AutoCloseable
 
     // Can be overridden by implementing applications
     private SonosApiConfiguration configuration;
-    private CloseableHttpClient httpClient;
+    private HttpClient httpClient;
 
     private final String version;
 
@@ -58,7 +56,7 @@ public class SonosApiClient implements AutoCloseable
      * @param configuration a {@link engineer.nightowl.sonos.api.SonosApiConfiguration} containing integration
      *                      information such as API keys
      *
-     * @see SonosApiClient#SonosApiClient(SonosApiConfiguration, CloseableHttpClient)
+     * @see SonosApiClient#SonosApiClient(SonosApiConfiguration, HttpClient)
      */
     public SonosApiClient(final SonosApiConfiguration configuration)
     {
@@ -70,9 +68,9 @@ public class SonosApiClient implements AutoCloseable
      *
      * @param configuration a {@link engineer.nightowl.sonos.api.SonosApiConfiguration} containing integration
      *                      information such as API keys
-     * @param httpClient a custom {@link CloseableHttpClient} - if null, a default client is initialised
+     * @param httpClient a custom {@link HttpClient} - if null, a default client is initialised
      */
-    public SonosApiClient(final SonosApiConfiguration configuration, final CloseableHttpClient httpClient)
+    public SonosApiClient(final SonosApiConfiguration configuration, final HttpClient httpClient)
     {
         loadProperties();
         version = properties.getProperty("sonosapijava.version");
@@ -101,11 +99,8 @@ public class SonosApiClient implements AutoCloseable
 
     public String getUserAgent()
     {
-        final String ahcUa = VersionInfo.getUserAgent("Apache-HttpClient",
-                "org.apache.http.client", HttpClientBuilder.class);
-
-        return String.format("sonos-api-java/%s (applicationId/%s) (httpClient/(%s))",
-                version, configuration.getApplicationId(), ahcUa);
+        return String.format("sonos-api-java/%s (applicationId/%s) (Java/%s)",
+                version, configuration.getApplicationId(), System.getProperty("java.version"));
     }
 
     /**
@@ -113,10 +108,12 @@ public class SonosApiClient implements AutoCloseable
      *
      * @return a default HTTP client.
      */
-    private CloseableHttpClient generateHttpClient()
+    private HttpClient generateHttpClient()
     {
         logger.debug("Using default HttpClient");
-        return HttpClientBuilder.create().setUserAgent(getUserAgent()).build();
+        return HttpClient.newBuilder()
+                .followRedirects(HttpClient.Redirect.NORMAL)
+                .build();
     }
 
     /**
@@ -124,13 +121,7 @@ public class SonosApiClient implements AutoCloseable
      */
     public void closeHttpClient()
     {
-        try
-        {
-            httpClient.close();
-        } catch (final IOException ioe)
-        {
-            logger.warn("Unable to close HttpClient", ioe);
-        }
+        httpClient.close();
     }
 
     /**
@@ -138,7 +129,7 @@ public class SonosApiClient implements AutoCloseable
      *
      * @return the configured HTTP client
      */
-    public CloseableHttpClient getHttpClient()
+    public HttpClient getHttpClient()
     {
         return httpClient;
     }
@@ -148,7 +139,7 @@ public class SonosApiClient implements AutoCloseable
      *
      * @param httpClient custom client to set
      */
-    public void setHttpClient(final CloseableHttpClient httpClient)
+    public void setHttpClient(final HttpClient httpClient)
     {
         this.httpClient = httpClient;
     }

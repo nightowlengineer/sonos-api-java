@@ -3,7 +3,7 @@ package engineer.nightowl.sonos.api.resource;
 import engineer.nightowl.sonos.api.domain.SonosGroupVolume;
 import engineer.nightowl.sonos.api.domain.SonosSuccess;
 import engineer.nightowl.sonos.api.exception.SonosApiClientException;
-import org.apache.http.client.methods.HttpUriRequest;
+import java.net.http.HttpRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -27,8 +27,8 @@ class GroupVolumeResourceTest extends MockedApiTestSetup
 
         resource.getVolume("token123", "group1");
 
-        final HttpUriRequest sent = captureRequest();
-        assertEquals("/control/api/v1/groups/group1/groupVolume", sent.getURI().getPath());
+        final HttpRequest sent = captureRequest();
+        assertEquals("/control/api/v1/groups/group1/groupVolume", sent.uri().getPath());
     }
 
     @Test
@@ -44,8 +44,8 @@ class GroupVolumeResourceTest extends MockedApiTestSetup
 
         resource.setVolume("token123", "group1", 50);
 
-        final HttpUriRequest sent = captureRequest();
-        assertEquals("/control/api/v1/groups/group1/groupVolume", sent.getURI().getPath());
+        final HttpRequest sent = captureRequest();
+        assertEquals("/control/api/v1/groups/group1/groupVolume", sent.uri().getPath());
     }
 
     @Test
@@ -61,8 +61,8 @@ class GroupVolumeResourceTest extends MockedApiTestSetup
 
         resource.setRelativeVolume("token123", "group1", 10);
 
-        final HttpUriRequest sent = captureRequest();
-        assertEquals("/control/api/v1/groups/group1/groupVolume/relative", sent.getURI().getPath());
+        final HttpRequest sent = captureRequest();
+        assertEquals("/control/api/v1/groups/group1/groupVolume/relative", sent.uri().getPath());
     }
 
     @Test
@@ -78,8 +78,8 @@ class GroupVolumeResourceTest extends MockedApiTestSetup
 
         resource.setMute("token123", "group1", true);
 
-        final HttpUriRequest sent = captureRequest();
-        assertEquals("/control/api/v1/groups/group1/groupVolume/mute", sent.getURI().getPath());
+        final HttpRequest sent = captureRequest();
+        assertEquals("/control/api/v1/groups/group1/groupVolume/mute", sent.uri().getPath());
     }
 
     @Test

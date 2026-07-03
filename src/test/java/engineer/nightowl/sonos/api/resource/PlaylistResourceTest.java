@@ -4,7 +4,7 @@ import engineer.nightowl.sonos.api.domain.SonosPlaylist;
 import engineer.nightowl.sonos.api.domain.SonosPlaylistList;
 import engineer.nightowl.sonos.api.domain.SonosSuccess;
 import engineer.nightowl.sonos.api.exception.SonosApiClientException;
-import org.apache.http.client.methods.HttpUriRequest;
+import java.net.http.HttpRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -28,7 +28,7 @@ class PlaylistResourceTest extends MockedApiTestSetup
 
         resource.getPlaylists("token123", "household1");
 
-        assertEquals("/control/api/v1/households/household1/playlists", captureRequest().getURI().getPath());
+        assertEquals("/control/api/v1/households/household1/playlists", captureRequest().uri().getPath());
     }
 
     @Test
@@ -44,7 +44,7 @@ class PlaylistResourceTest extends MockedApiTestSetup
 
         resource.getPlaylist("token123", "household1", "playlist1");
 
-        assertEquals("/control/api/v1/households/household1/playlists/playlist1", captureRequest().getURI().getPath());
+        assertEquals("/control/api/v1/households/household1/playlists/playlist1", captureRequest().uri().getPath());
     }
 
     @Test
@@ -66,7 +66,7 @@ class PlaylistResourceTest extends MockedApiTestSetup
 
         resource.loadPlaylist("token123", "group1", "playlist1", true, null);
 
-        assertEquals("/control/api/v1/groups/group1/playlists", captureRequest().getURI().getPath());
+        assertEquals("/control/api/v1/groups/group1/playlists", captureRequest().uri().getPath());
     }
 
     @Test

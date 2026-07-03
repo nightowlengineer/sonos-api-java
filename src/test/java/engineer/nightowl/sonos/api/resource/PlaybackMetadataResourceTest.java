@@ -2,7 +2,7 @@ package engineer.nightowl.sonos.api.resource;
 
 import engineer.nightowl.sonos.api.domain.SonosSuccess;
 import engineer.nightowl.sonos.api.exception.SonosApiClientException;
-import org.apache.http.client.methods.HttpUriRequest;
+import java.net.http.HttpRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -26,8 +26,8 @@ class PlaybackMetadataResourceTest extends MockedApiTestSetup
 
         resource.subscribe("token123", "group1");
 
-        final HttpUriRequest sent = captureRequest();
-        assertEquals("/control/api/v1/groups/group1/playbackMetadata/subscription", sent.getURI().getPath());
+        final HttpRequest sent = captureRequest();
+        assertEquals("/control/api/v1/groups/group1/playbackMetadata/subscription", sent.uri().getPath());
     }
 
     @Test
@@ -43,8 +43,8 @@ class PlaybackMetadataResourceTest extends MockedApiTestSetup
 
         resource.unsubscribe("token123", "group1");
 
-        final HttpUriRequest sent = captureRequest();
-        assertEquals("/control/api/v1/groups/group1/playbackMetadata/subscription", sent.getURI().getPath());
+        final HttpRequest sent = captureRequest();
+        assertEquals("/control/api/v1/groups/group1/playbackMetadata/subscription", sent.uri().getPath());
     }
 
     @Test

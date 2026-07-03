@@ -11,22 +11,15 @@ import engineer.nightowl.sonos.api.exception.SonosApiClientException;
 import engineer.nightowl.sonos.api.exception.SonosApiError;
 import engineer.nightowl.sonos.api.specs.Validatable;
 import engineer.nightowl.sonos.api.util.SonosUtilityHelper;
-import org.apache.http.Header;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URISyntaxException;
+import java.net.URI;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 /**
  * Generic base class used for integrating with the Sonos API.
@@ -54,7 +47,7 @@ class BaseResource
     }
 
     /**
-     * Main API call method. Takes in a {@link HttpUriRequest} comprising of a
+     * Main API call method. Takes in a {@link HttpRequest} comprising of a
      * URI and method
      *
      * @param request with the relevant URI and method (with associated data as
@@ -64,85 +57,79 @@ class BaseResource
      * @throws SonosApiClientException if unable to build or execute the request
      * @throws SonosApiError           if the Sonos API returns an error to an otherwise successful request
      */
-    <T> T callApi(final HttpUriRequest request, final Class<T> type) throws SonosApiClientException, SonosApiError
+    <T> T callApi(final HttpRequest request, final Class<T> type) throws SonosApiClientException, SonosApiError
     {
-        logger.debug("Sending request to {}", request.getURI());
-        try (final CloseableHttpResponse response = executeRequest(request))
+        logger.debug("Sending request to {}", request.uri());
+        final HttpResponse<byte[]> response = executeRequest(request);
+
+        if (401 == response.statusCode())
         {
-            if (401 == response.getStatusLine().getStatusCode())
-            {
-                throw new SonosApiClientException("Invalid token");
-            }
-            final byte[] bytes;
-            try (final InputStream stream = response.getEntity().getContent())
-            {
-                bytes = stream.readAllBytes();
-            } catch (final IOException ioe)
-            {
-                throw new SonosApiClientException("Unable to convert response body", ioe);
-            }
+            throw new SonosApiClientException("Invalid token");
+        }
+        final byte[] bytes = response.body();
 
-            logger.debug("Raw response from API: {}", response);
-            logger.debug("Raw response content from API: {}", bytes);
+        logger.debug("Raw response from API: {}", response);
+        logger.debug("Raw response content from API: {}", bytes);
 
-            // Get type from Sonos response - not always possible
-            final SonosType sonosDeclaredClass = getTypeFromHeader(response);
-            final String sonosDeclaredClassName = sonosDeclaredClass == null ? null : sonosDeclaredClass.getClazz().getSimpleName();
+        // Get type from Sonos response - not always possible
+        final SonosType sonosDeclaredClass = getTypeFromHeader(response);
+        final String sonosDeclaredClassName = sonosDeclaredClass == null ? null : sonosDeclaredClass.getClazz().getSimpleName();
 
-            // If Sonos didn't provide a type, or if one was provided and it matches what we wanted returned, proceed
-            if (sonosDeclaredClassName == null || sonosDeclaredClassName.equals(type.getSimpleName()))
-            {
-                try
-                {
-                    return OM.readValue(bytes, type);
-                } catch (final IOException e)
-                {
-                    final String msg = String.format("Unexpected error converting response to %s (Sonos declared %s)", type.getSimpleName(), sonosDeclaredClassName);
-                    throw new SonosApiClientException(msg, e);
-                }
-            }
-            // Otherwise it's not what we expected - likely an error object, in which case throw an exception with the mapped object
-            else
-            {
-                final Object responseContent;
-                try
-                {
-                    responseContent = OM.readValue(bytes, sonosDeclaredClass.getClazz());
-                } catch (final IOException e)
-                {
-                    throw new SonosApiClientException("Unable to parse error response from Sonos", e);
-                }
-
-                if (SonosType.getErrorTypes().contains(sonosDeclaredClass))
-                {
-                    throw (SonosApiError) sonosDeclaredClass.getClazz().cast(responseContent);
-                } else
-                {
-                    final String mismatchMsg = String.format("Sonos declared %s as the response type, but the integration requested %s", sonosDeclaredClassName, type.getSimpleName());
-                    throw new SonosApiClientException(mismatchMsg);
-                }
-            }
-        } catch (final IOException ioe)
+        // If Sonos didn't provide a type, or if one was provided and it matches what we wanted returned, proceed
+        if (sonosDeclaredClassName == null || sonosDeclaredClassName.equals(type.getSimpleName()))
         {
-            throw new SonosApiClientException("Error closing response from Sonos API", ioe);
+            try
+            {
+                return OM.readValue(bytes, type);
+            } catch (final IOException e)
+            {
+                final String msg = String.format("Unexpected error converting response to %s (Sonos declared %s)", type.getSimpleName(), sonosDeclaredClassName);
+                throw new SonosApiClientException(msg, e);
+            }
+        }
+        // Otherwise it's not what we expected - likely an error object, in which case throw an exception with the mapped object
+        else
+        {
+            final Object responseContent;
+            try
+            {
+                responseContent = OM.readValue(bytes, sonosDeclaredClass.getClazz());
+            } catch (final IOException e)
+            {
+                throw new SonosApiClientException("Unable to parse error response from Sonos", e);
+            }
+
+            if (SonosType.getErrorTypes().contains(sonosDeclaredClass))
+            {
+                throw (SonosApiError) sonosDeclaredClass.getClazz().cast(responseContent);
+            } else
+            {
+                final String mismatchMsg = String.format("Sonos declared %s as the response type, but the integration requested %s", sonosDeclaredClassName, type.getSimpleName());
+                throw new SonosApiClientException(mismatchMsg);
+            }
         }
     }
 
     /**
-     * Execute a request, wrapping transport failures in a {@link SonosApiClientException}.
+     * Execute a request, wrapping transport failures in a {@link SonosApiClientException}. The response
+     * body is fully buffered before this method returns, so there is nothing for callers to close.
      *
      * @param request the request to execute
-     * @return the raw response - callers are responsible for closing it
+     * @return the response
      * @throws SonosApiClientException if the request could not be executed
      */
-    private CloseableHttpResponse executeRequest(final HttpUriRequest request) throws SonosApiClientException
+    private HttpResponse<byte[]> executeRequest(final HttpRequest request) throws SonosApiClientException
     {
         try
         {
-            return apiClient.getHttpClient().execute(request);
+            return apiClient.getHttpClient().send(request, HttpResponse.BodyHandlers.ofByteArray());
         } catch (final IOException e)
         {
             throw new SonosApiClientException("Error interrogating Sonos API", e);
+        } catch (final InterruptedException e)
+        {
+            Thread.currentThread().interrupt();
+            throw new SonosApiClientException("Interrupted while calling Sonos API", e);
         }
     }
 
@@ -152,14 +139,14 @@ class BaseResource
      * @param response - raw response to fetch the header from
      * @return the {@link SonosType} declared, or null if not found
      */
-    SonosType getTypeFromHeader(final CloseableHttpResponse response) throws SonosApiClientException
+    SonosType getTypeFromHeader(final HttpResponse<?> response) throws SonosApiClientException
     {
         if (response != null)
         {
-            final Header header = response.getFirstHeader(SONOS_TYPE_HEADER);
-            if (header != null && !SonosUtilityHelper.isEmpty(header.getValue()))
+            final Optional<String> header = response.headers().firstValue(SONOS_TYPE_HEADER);
+            if (header.isPresent() && !SonosUtilityHelper.isEmpty(header.get()))
             {
-                final String headerValue = header.getValue();
+                final String headerValue = header.get();
                 if (!"none".equalsIgnoreCase(headerValue))
                 {
                     try
@@ -190,7 +177,7 @@ class BaseResource
      */
     <T> T getFromApi(final Class<T> returnType, final String token, final String path) throws SonosApiClientException, SonosApiError
     {
-        final HttpGet request = getGetRequest(token, path);
+        final HttpRequest request = getGetRequest(token, path);
         return callApi(request, returnType);
     }
 
@@ -207,7 +194,7 @@ class BaseResource
      */
     <T> T deleteFromApi(final Class<T> returnType, final String token, final String path) throws SonosApiClientException, SonosApiError
     {
-        final HttpDelete request = getDeleteRequest(token, path);
+        final HttpRequest request = getDeleteRequest(token, path);
         return callApi(request, returnType);
     }
 
@@ -243,7 +230,7 @@ class BaseResource
     <T, U> T postToApi(final Class<T> returnType, final String token, final String path,
                        final U content) throws SonosApiClientException, SonosApiError
     {
-        final HttpPost request = getPostRequest(token, path);
+        final HttpRequest.Builder builder = getStandardRequest(token, path);
         final Boolean validationEnabled = apiClient.getConfiguration().isClientSideValidationEnabled();
         // If the content for the request has the ability to be validated, do so if enabled.
         // If the object is invalid, there's no point sending it to the API to be rejected.
@@ -251,54 +238,53 @@ class BaseResource
         {
             ((Validatable) content).validate();
         }
+
+        final HttpRequest request;
         if (!SonosUtilityHelper.isEmpty(content))
         {
             final String json;
-            final StringEntity requestContent;
             try
             {
                 json = OM.writeValueAsString(content);
-                requestContent = new StringEntity(json, ContentType.APPLICATION_JSON);
             } catch (final JsonProcessingException e)
             {
                 throw new SonosApiClientException("Unable to convert POST request parameters", e);
             }
-            request.setEntity(requestContent);
+            request = builder.setHeader("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(json, StandardCharsets.UTF_8))
+                    .build();
+        }
+        else
+        {
+            request = builder.POST(HttpRequest.BodyPublishers.noBody()).build();
         }
         return callApi(request, returnType);
     }
 
     /**
-     * Decorate a request (e.g. {@link HttpGet} or {@link HttpPost}) with the standard URI and Bearer auth
-     * header used by every Sonos control API call.
+     * Build up a generic request builder, decorated with the standard URI and Bearer auth header used by
+     * every Sonos control API call. The caller finishes the builder (e.g. {@code .GET().build()}).
      *
-     * @param request the request to decorate
-     * @param token   for the user
-     * @param path    for the API resource
-     * @param <T>     for the requestType
-     * @return the same request instance, decorated
+     * @param token for the user
+     * @param path  for the API resource
+     * @return a decorated, not-yet-finished request builder
      * @throws SonosApiClientException if an error occurs building the request
      */
-    <T extends HttpRequestBase> T getStandardRequest(final T request, final String token,
-                                                             final String path) throws SonosApiClientException
+    HttpRequest.Builder getStandardRequest(final String token, final String path) throws SonosApiClientException
     {
         final SonosApiConfiguration configuration = apiClient.getConfiguration();
-        final URIBuilder uri = new URIBuilder();
-        uri.setScheme("https");
-        uri.setHost(configuration.getControlBaseUrl());
-        uri.setPath(path);
-
-        request.setHeader("Authorization", String.format("Bearer %s", token));
-
+        final URI uri;
         try
         {
-            request.setURI(uri.build());
-        } catch (final URISyntaxException e)
+            uri = URI.create("https://" + configuration.getControlBaseUrl() + path);
+        } catch (final IllegalArgumentException e)
         {
             throw new SonosApiClientException("Invalid URI built", e);
         }
 
-        return request;
+        return HttpRequest.newBuilder(uri)
+                .setHeader("Authorization", String.format("Bearer %s", token))
+                .setHeader("User-Agent", apiClient.getUserAgent());
     }
 
     /**
@@ -309,35 +295,22 @@ class BaseResource
      * @return a basic GET request
      * @throws SonosApiClientException if an error occurs building the request
      */
-    HttpGet getGetRequest(final String token, final String path) throws SonosApiClientException
+    HttpRequest getGetRequest(final String token, final String path) throws SonosApiClientException
     {
-        return getStandardRequest(new HttpGet(), token, path);
+        return getStandardRequest(token, path).GET().build();
     }
 
     /**
-     * Helper method to generate a basic GET request
+     * Helper method to generate a basic DELETE request
      *
      * @param token for the user
      * @param path  for the API resource
      * @return a basic DELETE request
      * @throws SonosApiClientException if an error occurs building the request
      */
-    HttpDelete getDeleteRequest(final String token, final String path) throws SonosApiClientException
+    HttpRequest getDeleteRequest(final String token, final String path) throws SonosApiClientException
     {
-        return getStandardRequest(new HttpDelete(), token, path);
-    }
-
-    /**
-     * Helper method to generate a basic POST request
-     *
-     * @param token for the user
-     * @param path  for the API resource
-     * @return a basic POST request
-     * @throws SonosApiClientException if an error occurs building the request
-     */
-    HttpPost getPostRequest(final String token, final String path) throws SonosApiClientException
-    {
-        return getStandardRequest(new HttpPost(), token, path);
+        return getStandardRequest(token, path).DELETE().build();
     }
 
     void validateNotNull(final Object o) throws SonosApiClientException

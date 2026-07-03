@@ -4,7 +4,7 @@ import engineer.nightowl.sonos.api.domain.SonosHomeTheaterOptions;
 import engineer.nightowl.sonos.api.domain.SonosSuccess;
 import engineer.nightowl.sonos.api.enums.SonosTvPowerState;
 import engineer.nightowl.sonos.api.exception.SonosApiClientException;
-import org.apache.http.client.methods.HttpUriRequest;
+import java.net.http.HttpRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -28,8 +28,8 @@ class HomeTheaterResourceTest extends MockedApiTestSetup
 
         resource.loadHomeTheaterPlayback("token123", "player1");
 
-        final HttpUriRequest sent = captureRequest();
-        assertEquals("/control/api/v1/players/player1/homeTheater", sent.getURI().getPath());
+        final HttpRequest sent = captureRequest();
+        assertEquals("/control/api/v1/players/player1/homeTheater", sent.uri().getPath());
     }
 
     @Test
@@ -45,8 +45,8 @@ class HomeTheaterResourceTest extends MockedApiTestSetup
 
         resource.setTvPowerState("token123", "player1", SonosTvPowerState.ON);
 
-        final HttpUriRequest sent = captureRequest();
-        assertEquals("/control/api/v1/players/player1/homeTheater/tvPowerState", sent.getURI().getPath());
+        final HttpRequest sent = captureRequest();
+        assertEquals("/control/api/v1/players/player1/homeTheater/tvPowerState", sent.uri().getPath());
     }
 
     @Test
@@ -63,8 +63,8 @@ class HomeTheaterResourceTest extends MockedApiTestSetup
 
         resource.getOptions("token123", "player1");
 
-        final HttpUriRequest sent = captureRequest();
-        assertEquals("/control/api/v1/players/player1/homeTheater/options", sent.getURI().getPath());
+        final HttpRequest sent = captureRequest();
+        assertEquals("/control/api/v1/players/player1/homeTheater/options", sent.uri().getPath());
     }
 
     @Test
@@ -80,8 +80,8 @@ class HomeTheaterResourceTest extends MockedApiTestSetup
 
         resource.setOptions("token123", "player1", new SonosHomeTheaterOptions());
 
-        final HttpUriRequest sent = captureRequest();
-        assertEquals("/control/api/v1/players/player1/homeTheater/options", sent.getURI().getPath());
+        final HttpRequest sent = captureRequest();
+        assertEquals("/control/api/v1/players/player1/homeTheater/options", sent.uri().getPath());
     }
 
     @Test
