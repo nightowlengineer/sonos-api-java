@@ -28,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class BaseResourceTest
@@ -100,6 +101,7 @@ public class BaseResourceTest
                 "token123", "some/test");
 
         assertEquals(options, responseOptions);
+        verify(mockedResponse).close();
     }
 
     @Test
@@ -143,6 +145,7 @@ public class BaseResourceTest
         {
             assertEquals("Invalid token", e.getMessage());
         }
+        verify(mockedResponse).close();
     }
 
     @Test
