@@ -19,6 +19,8 @@ public enum SonosType
     groupVolume(SonosGroupVolume.class),
     homeTheaterOptions(SonosHomeTheaterOptions.class),
     households(SonosHouseholdList.class),
+    // Deliberately UpperCamelCase, unlike its siblings above - this is the exact literal value Sonos
+    // documents for the X-Sonos-Type header (see docs.sonos.com/docs/types), not a naming inconsistency.
     MusicServiceAccount(SonosMusicServiceAccount.class),
     playbackError(SonosPlaybackError.class),
     playbackStatus(SonosPlaybackStatus.class),
