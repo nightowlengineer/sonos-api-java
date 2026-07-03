@@ -34,9 +34,9 @@ Create a new configuration object, set your integration's properties (see furthe
 then create a client and pass in that configuration:
 ```java
 final SonosApiConfiguration configuration = new SonosApiConfiguration();
-configuration.setApiKey(properties.getProperty("apiKey"));
-configuration.setApiSecret(properties.getProperty("apiSecret"));
-configuration.setApplicationId(properties.getProperty("applicationId"));
+configuration.setApiKey("<your-api-key>");
+configuration.setApiSecret("<your-api-secret>");
+configuration.setApplicationId("<your-application-id>");
 
 final SonosApiClient client = new SonosApiClient(configuration);
 ```
