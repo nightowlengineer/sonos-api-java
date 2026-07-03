@@ -207,7 +207,7 @@ public class BaseResourceTest
     @Test
     void getStandardRequest() throws SonosApiClientException
     {
-        final HttpGet req = baseResource.getStandardRequest(HttpGet.class, "token123", "/some/path");
+        final HttpGet req = baseResource.getStandardRequest(new HttpGet(), "token123", "/some/path");
         assertEquals(HttpGet.METHOD_NAME,
                 req.getMethod());
 
