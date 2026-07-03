@@ -1,10 +1,14 @@
 package engineer.nightowl.sonos.api.util;
 
 import engineer.nightowl.sonos.api.exception.SonosApiClientException;
+import org.apache.http.Header;
 import org.apache.http.entity.ContentType;
+import org.apache.http.message.BasicHeader;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.security.NoSuchAlgorithmException;
@@ -54,5 +58,29 @@ class SonosCallbackHelperTest
     void testVerifySignatureWithInvalidHeaders() throws SonosApiClientException, NoSuchAlgorithmException
     {
         assertFalse(SonosCallbackHelper.verifySignature(getInvalidHeaders(), apiKey, apiSecret));
+    }
+
+    @Test
+    void testVerifySignatureWithMissingHeaderThrowsClientException()
+    {
+        final Map<String, String> headers = getValidHeaders();
+        headers.remove("X-Sonos-Type");
+
+        final SonosApiClientException exception = assertThrows(SonosApiClientException.class,
+                () -> SonosCallbackHelper.verifySignature(headers, apiKey, apiSecret));
+        assertTrue(exception.getMessage().contains("X-Sonos-Type"));
+    }
+
+    @Test
+    void testConvertHeadersToMapKeepsFirstValueOnDuplicateHeaderName()
+    {
+        final Header[] headers = new Header[] {
+                new BasicHeader("X-Sonos-Type", "first"),
+                new BasicHeader("X-Sonos-Type", "second")
+        };
+
+        final Map<String, String> result = SonosCallbackHelper.convertHeadersToMap(headers);
+
+        assertEquals("first", result.get("X-Sonos-Type"));
     }
 }
