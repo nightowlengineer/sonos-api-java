@@ -1,12 +1,8 @@
 package engineer.nightowl.sonos.api.util;
 
 import engineer.nightowl.sonos.api.exception.SonosApiClientException;
-import org.apache.http.Header;
-import org.apache.http.entity.ContentType;
-import org.apache.http.message.BasicHeader;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -29,7 +25,7 @@ class SonosCallbackHelperTest
         headers.put("X-Sonos-Target-Type", "target-type");
         headers.put("X-Sonos-Target-Value", "target-value");
         headers.put("Unrelated-Header", "sonos123");
-        headers.put("Content-Type", ContentType.APPLICATION_JSON.getMimeType());
+        headers.put("Content-Type", "application/json");
 
         return headers;
     }
@@ -69,18 +65,5 @@ class SonosCallbackHelperTest
         final SonosApiClientException exception = assertThrows(SonosApiClientException.class,
                 () -> SonosCallbackHelper.verifySignature(headers, apiKey, apiSecret));
         assertTrue(exception.getMessage().contains("X-Sonos-Type"));
-    }
-
-    @Test
-    void testConvertHeadersToMapKeepsFirstValueOnDuplicateHeaderName()
-    {
-        final Header[] headers = new Header[] {
-                new BasicHeader("X-Sonos-Type", "first"),
-                new BasicHeader("X-Sonos-Type", "second")
-        };
-
-        final Map<String, String> result = SonosCallbackHelper.convertHeadersToMap(headers);
-
-        assertEquals("first", result.get("X-Sonos-Type"));
     }
 }

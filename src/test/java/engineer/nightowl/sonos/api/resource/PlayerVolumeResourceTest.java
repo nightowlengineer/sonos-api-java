@@ -3,7 +3,7 @@ package engineer.nightowl.sonos.api.resource;
 import engineer.nightowl.sonos.api.domain.SonosPlayerVolume;
 import engineer.nightowl.sonos.api.domain.SonosSuccess;
 import engineer.nightowl.sonos.api.exception.SonosApiClientException;
-import org.apache.http.client.methods.HttpUriRequest;
+import java.net.http.HttpRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -27,7 +27,7 @@ class PlayerVolumeResourceTest extends MockedApiTestSetup
 
         resource.getVolume("token123", "player1");
 
-        assertEquals("/control/api/v1/players/player1/playerVolume", captureRequest().getURI().getPath());
+        assertEquals("/control/api/v1/players/player1/playerVolume", captureRequest().uri().getPath());
     }
 
     @Test
@@ -43,7 +43,7 @@ class PlayerVolumeResourceTest extends MockedApiTestSetup
 
         resource.setMute("token123", "player1", true);
 
-        assertEquals("/control/api/v1/players/player1/playerVolume/mute", captureRequest().getURI().getPath());
+        assertEquals("/control/api/v1/players/player1/playerVolume/mute", captureRequest().uri().getPath());
     }
 
     @Test
@@ -59,7 +59,7 @@ class PlayerVolumeResourceTest extends MockedApiTestSetup
 
         resource.setRelativeVolume("token123", "player1", 10, false);
 
-        assertEquals("/control/api/v1/players/player1/playerVolume/relative", captureRequest().getURI().getPath());
+        assertEquals("/control/api/v1/players/player1/playerVolume/relative", captureRequest().uri().getPath());
     }
 
     @Test
@@ -75,7 +75,7 @@ class PlayerVolumeResourceTest extends MockedApiTestSetup
 
         resource.setVolume("token123", "player1", 50, false);
 
-        assertEquals("/control/api/v1/players/player1/playerVolume", captureRequest().getURI().getPath());
+        assertEquals("/control/api/v1/players/player1/playerVolume", captureRequest().uri().getPath());
     }
 
     @Test

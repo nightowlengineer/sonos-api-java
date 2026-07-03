@@ -2,17 +2,13 @@ package engineer.nightowl.sonos.api.util;
 
 import engineer.nightowl.sonos.api.SonosApiClient;
 import engineer.nightowl.sonos.api.exception.SonosApiClientException;
-import org.apache.http.Header;
-import org.apache.http.HttpMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -79,26 +75,5 @@ public class SonosCallbackHelper
     public static Boolean verifySignature(final Map<String, String> headers, final SonosApiClient apiClient) throws SonosApiClientException
     {
         return SonosCallbackHelper.verifySignature(headers, apiClient.getConfiguration().getApiKey(), apiClient.getConfiguration().getApiSecret());
-    }
-
-    public static Boolean verifySignature(final HttpMessage message, final SonosApiClient apiClient) throws SonosApiClientException
-    {
-        return SonosCallbackHelper.verifySignature(message, apiClient.getConfiguration().getApiKey(), apiClient.getConfiguration().getApiSecret());
-    }
-
-    public static Boolean verifySignature(final HttpMessage message, final String apiKey, final String apiSecret) throws SonosApiClientException
-    {
-        // Map of headers - Name, Value
-        Map<String, String> headers = convertHeadersToMap(message.getAllHeaders());
-        return SonosCallbackHelper.verifySignature(headers, apiKey, apiSecret);
-    }
-
-    public static Map<String, String> convertHeadersToMap(final Header[] headers)
-    {
-        // HTTP permits repeated header names (e.g. behind a proxy/load balancer) - keep the first value
-        // seen rather than letting Collectors.toMap throw IllegalStateException on a duplicate key.
-        return Arrays
-                .stream(headers)
-                .collect(Collectors.toMap(Header::getName, Header::getValue, (first, second) -> first));
     }
 }

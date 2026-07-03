@@ -4,7 +4,7 @@ import engineer.nightowl.sonos.api.domain.SonosAudioClip;
 import engineer.nightowl.sonos.api.domain.SonosSuccess;
 import engineer.nightowl.sonos.api.enums.SonosPriority;
 import engineer.nightowl.sonos.api.exception.SonosApiClientException;
-import org.apache.http.client.methods.HttpUriRequest;
+import java.net.http.HttpRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -37,8 +37,8 @@ class AudioClipResourceTest extends MockedApiTestSetup
         final SonosAudioClip result = resource.loadAudioClip("token123", "player1", request);
 
         assertEquals("clip1", result.getId());
-        final HttpUriRequest sent = captureRequest();
-        assertEquals("/control/api/v1/players/player1/audioClip", sent.getURI().getPath());
+        final HttpRequest sent = captureRequest();
+        assertEquals("/control/api/v1/players/player1/audioClip", sent.uri().getPath());
     }
 
     @Test
@@ -56,8 +56,8 @@ class AudioClipResourceTest extends MockedApiTestSetup
         final SonosSuccess result = resource.cancelAudioClip("token123", "player1", "clip1");
 
         assertTrue(result.getSuccess());
-        final HttpUriRequest sent = captureRequest();
-        assertEquals("/control/api/v1/players/player1/audioClip/clip1", sent.getURI().getPath());
+        final HttpRequest sent = captureRequest();
+        assertEquals("/control/api/v1/players/player1/audioClip/clip1", sent.uri().getPath());
     }
 
     @Test

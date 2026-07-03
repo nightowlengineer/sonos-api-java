@@ -3,7 +3,7 @@ package engineer.nightowl.sonos.api.resource;
 import engineer.nightowl.sonos.api.domain.SonosFavoriteList;
 import engineer.nightowl.sonos.api.domain.SonosSuccess;
 import engineer.nightowl.sonos.api.exception.SonosApiClientException;
-import org.apache.http.client.methods.HttpUriRequest;
+import java.net.http.HttpRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -28,8 +28,8 @@ class FavoriteResourceTest extends MockedApiTestSetup
 
         resource.getFavorites("token123", "household1");
 
-        final HttpUriRequest sent = captureRequest();
-        assertEquals("/control/api/v1/households/household1/favorites", sent.getURI().getPath());
+        final HttpRequest sent = captureRequest();
+        assertEquals("/control/api/v1/households/household1/favorites", sent.uri().getPath());
     }
 
     @Test
@@ -46,8 +46,8 @@ class FavoriteResourceTest extends MockedApiTestSetup
         final SonosSuccess result = resource.loadFavorite("token123", "group1", "favorite1", true, null);
 
         assertTrue(result.getSuccess());
-        final HttpUriRequest sent = captureRequest();
-        assertEquals("/control/api/v1/groups/group1/favorites", sent.getURI().getPath());
+        final HttpRequest sent = captureRequest();
+        assertEquals("/control/api/v1/groups/group1/favorites", sent.uri().getPath());
         assertTrue(readRequestBody(sent).contains("favorite1"));
     }
 

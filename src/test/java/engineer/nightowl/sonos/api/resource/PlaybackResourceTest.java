@@ -4,7 +4,7 @@ import engineer.nightowl.sonos.api.domain.SonosPlayMode;
 import engineer.nightowl.sonos.api.domain.SonosPlaybackStatus;
 import engineer.nightowl.sonos.api.domain.SonosSuccess;
 import engineer.nightowl.sonos.api.exception.SonosApiClientException;
-import org.apache.http.client.methods.HttpUriRequest;
+import java.net.http.HttpRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -28,7 +28,7 @@ class PlaybackResourceTest extends MockedApiTestSetup
 
         resource.getPlaybackStatus("token123", "group1");
 
-        assertEquals("/control/api/v1/groups/group1/playback", captureRequest().getURI().getPath());
+        assertEquals("/control/api/v1/groups/group1/playback", captureRequest().uri().getPath());
     }
 
     @Test
@@ -44,7 +44,7 @@ class PlaybackResourceTest extends MockedApiTestSetup
 
         resource.loadLineIn("token123", "group1", "device1", true);
 
-        assertEquals("/control/api/v1/groups/group1/playback/lineIn", captureRequest().getURI().getPath());
+        assertEquals("/control/api/v1/groups/group1/playback/lineIn", captureRequest().uri().getPath());
     }
 
     @Test
@@ -60,7 +60,7 @@ class PlaybackResourceTest extends MockedApiTestSetup
 
         resource.play("token123", "group1");
 
-        assertEquals("/control/api/v1/groups/group1/playback/play", captureRequest().getURI().getPath());
+        assertEquals("/control/api/v1/groups/group1/playback/play", captureRequest().uri().getPath());
     }
 
     @Test
@@ -76,7 +76,7 @@ class PlaybackResourceTest extends MockedApiTestSetup
 
         resource.pause("token123", "group1");
 
-        assertEquals("/control/api/v1/groups/group1/playback/pause", captureRequest().getURI().getPath());
+        assertEquals("/control/api/v1/groups/group1/playback/pause", captureRequest().uri().getPath());
     }
 
     @Test
@@ -92,7 +92,7 @@ class PlaybackResourceTest extends MockedApiTestSetup
 
         resource.seek("token123", "group1", "item1", 1000);
 
-        assertEquals("/control/api/v1/groups/group1/playback/seek", captureRequest().getURI().getPath());
+        assertEquals("/control/api/v1/groups/group1/playback/seek", captureRequest().uri().getPath());
     }
 
     @Test
@@ -114,7 +114,7 @@ class PlaybackResourceTest extends MockedApiTestSetup
 
         resource.seekRelative("token123", "group1", "item1", 1000);
 
-        assertEquals("/control/api/v1/groups/group1/playback/seekRelative", captureRequest().getURI().getPath());
+        assertEquals("/control/api/v1/groups/group1/playback/seekRelative", captureRequest().uri().getPath());
     }
 
     @Test
@@ -130,7 +130,7 @@ class PlaybackResourceTest extends MockedApiTestSetup
 
         resource.setPlayModes("token123", "group1", new SonosPlayMode());
 
-        assertEquals("/control/api/v1/groups/group1/playback/playMode", captureRequest().getURI().getPath());
+        assertEquals("/control/api/v1/groups/group1/playback/playMode", captureRequest().uri().getPath());
     }
 
     @Test
@@ -146,7 +146,7 @@ class PlaybackResourceTest extends MockedApiTestSetup
 
         resource.skipToNextTrack("token123", "group1");
 
-        assertEquals("/control/api/v1/groups/group1/playback/skipToNextTrack", captureRequest().getURI().getPath());
+        assertEquals("/control/api/v1/groups/group1/playback/skipToNextTrack", captureRequest().uri().getPath());
     }
 
     @Test
@@ -162,7 +162,7 @@ class PlaybackResourceTest extends MockedApiTestSetup
 
         resource.skipToPreviousTrack("token123", "group1");
 
-        assertEquals("/control/api/v1/groups/group1/playback/skipToPreviousTrack", captureRequest().getURI().getPath());
+        assertEquals("/control/api/v1/groups/group1/playback/skipToPreviousTrack", captureRequest().uri().getPath());
     }
 
     @Test
@@ -178,7 +178,7 @@ class PlaybackResourceTest extends MockedApiTestSetup
 
         resource.togglePlayPause("token123", "group1");
 
-        assertEquals("/control/api/v1/groups/group1/playback/togglePlayPause", captureRequest().getURI().getPath());
+        assertEquals("/control/api/v1/groups/group1/playback/togglePlayPause", captureRequest().uri().getPath());
     }
 
     @Test
