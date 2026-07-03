@@ -1,5 +1,7 @@
 package engineer.nightowl.sonos.api.domain;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * <p>SonosPlaybackPolicy class.</p>
  */
@@ -317,6 +319,7 @@ public class SonosPlaybackPolicy
      *
      * @return a {@link java.lang.Boolean} object.
      */
+    @JsonProperty("isVisible")
     public Boolean getVisible()
     {
         return isVisible;
@@ -327,6 +330,7 @@ public class SonosPlaybackPolicy
      *
      * @param visible a {@link java.lang.Boolean} object.
      */
+    @JsonProperty("isVisible")
     public void setVisible(final Boolean visible)
     {
         isVisible = visible;

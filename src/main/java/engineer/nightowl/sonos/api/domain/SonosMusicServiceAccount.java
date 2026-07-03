@@ -1,11 +1,11 @@
 package engineer.nightowl.sonos.api.domain;
 
-import engineer.nightowl.sonos.api.enums.SonosType;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * <p>SonosMusicServiceAccount class.</p>
  */
-public class SonosMusicServiceAccount extends SonosDomainObject
+public class SonosMusicServiceAccount
 {
     private String userIdHashCode;
     private String nickname;
@@ -103,6 +103,7 @@ public class SonosMusicServiceAccount extends SonosDomainObject
      *
      * @return a {@link java.lang.Boolean} object.
      */
+    @JsonProperty("isGuest")
     public Boolean getGuest()
     {
         return isGuest;
@@ -113,6 +114,7 @@ public class SonosMusicServiceAccount extends SonosDomainObject
      *
      * @param guest a {@link java.lang.Boolean} object.
      */
+    @JsonProperty("isGuest")
     public void setGuest(final Boolean guest)
     {
         isGuest = guest;
@@ -136,11 +138,5 @@ public class SonosMusicServiceAccount extends SonosDomainObject
     public void setService(final SonosService service)
     {
         this.service = service;
-    }
-
-    @Override
-    SonosType getSonosType()
-    {
-        return SonosType.MusicServiceAccount;
     }
 }
