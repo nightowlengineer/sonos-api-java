@@ -53,6 +53,7 @@ public class PlaybackSessionResource extends SubscribableResource
     public SonosPlaybackSessionStatus createSession(final String clientToken, final String groupId, final SonosSessionRequest request)
             throws SonosApiClientException, SonosApiError
     {
+        validateNotNull(groupId, "groupId");
         return postToApi(SonosPlaybackSessionStatus.class, clientToken, String.format("/v1/groups/%s/playbackSession", groupId), request);
     }
 
@@ -72,6 +73,7 @@ public class PlaybackSessionResource extends SubscribableResource
     public SonosPlaybackSessionStatus joinSession(final String clientToken, final String groupId, final SonosSessionRequest request)
             throws SonosApiClientException, SonosApiError
     {
+        validateNotNull(groupId, "groupId");
         return postToApi(SonosPlaybackSessionStatus.class, clientToken, String.format("/v1/groups/%s/playbackSession/join", groupId), request);
     }
 
@@ -91,6 +93,7 @@ public class PlaybackSessionResource extends SubscribableResource
     public SonosPlaybackSessionStatus joinOrCreateSession(final String clientToken, final String groupId, final SonosSessionRequest request)
             throws SonosApiClientException, SonosApiError
     {
+        validateNotNull(groupId, "groupId");
         return postToApi(SonosPlaybackSessionStatus.class, clientToken, String.format("/v1/groups/%s/playbackSession/joinOrCreate", groupId), request);
     }
 
@@ -108,6 +111,7 @@ public class PlaybackSessionResource extends SubscribableResource
     public SonosSuccess loadCloudQueue(final String clientToken, final String sessionId, final SonosCloudQueueRequest request)
             throws SonosApiClientException, SonosApiError
     {
+        validateNotNull(sessionId, "sessionId");
         return postToApi(SonosSuccess.class, clientToken, String.format("/v1/playbackSessions/%s/playbackSession/loadCloudQueue", sessionId), request);
     }
 
@@ -125,6 +129,7 @@ public class PlaybackSessionResource extends SubscribableResource
     public SonosSuccess loadStreamUrl(final String clientToken, final String sessionId, final SonosStreamUrlRequest request)
             throws SonosApiClientException, SonosApiError
     {
+        validateNotNull(sessionId, "sessionId");
         return postToApi(SonosSuccess.class, clientToken, String.format("/v1/playbackSessions/%s/playbackSession/loadStreamUrl", sessionId), request);
     }
 
@@ -141,6 +146,7 @@ public class PlaybackSessionResource extends SubscribableResource
     public SonosSuccess refreshCloudQueue(final String clientToken, final String sessionId)
             throws SonosApiClientException, SonosApiError
     {
+        validateNotNull(sessionId, "sessionId");
         return postToApi(SonosSuccess.class, clientToken, String.format("/v1/playbackSessions/%s/playbackSession/refreshCloudQueue", sessionId));
     }
 
@@ -158,6 +164,7 @@ public class PlaybackSessionResource extends SubscribableResource
     public SonosSuccess skipToItem(final String clientToken, final String sessionId, final SonosSessionRequest request)
             throws SonosApiClientException, SonosApiError
     {
+        validateNotNull(sessionId, "sessionId");
         return postToApi(SonosSuccess.class, clientToken, String.format("/v1/playbackSessions/%s/playbackSession/skipToItem", sessionId), request);
     }
 
@@ -168,14 +175,15 @@ public class PlaybackSessionResource extends SubscribableResource
      * @param clientToken for the user
      * @param sessionId a {@link java.lang.String} object.
      * @param itemId a {@link java.lang.String} object.
-     * @param positionMillis a {@link java.lang.String} object.
+     * @param positionMillis an {@link java.lang.Integer} object.
      * @return if the call was successful
      * @throws engineer.nightowl.sonos.api.exception.SonosApiClientException if an error occurs during the call.
      * @throws engineer.nightowl.sonos.api.exception.SonosApiError if there is an error from the API.
      */
-    public SonosSuccess seek(final String clientToken, final String sessionId, final String itemId, final String positionMillis)
+    public SonosSuccess seek(final String clientToken, final String sessionId, final String itemId, final Integer positionMillis)
             throws SonosApiClientException, SonosApiError
     {
+        validateNotNull(sessionId, "sessionId");
         validateNotNull(itemId);
         validateNotNull(positionMillis);
         final Map<String, Object> payload = new HashMap<>();
@@ -191,14 +199,15 @@ public class PlaybackSessionResource extends SubscribableResource
      * @param clientToken for the user
      * @param sessionId a {@link java.lang.String} object.
      * @param itemId a {@link java.lang.String} object.
-     * @param deltaMillis a {@link java.lang.String} object.
+     * @param deltaMillis an {@link java.lang.Integer} object.
      * @return if the call was successful
      * @throws engineer.nightowl.sonos.api.exception.SonosApiClientException if an error occurs during the call.
      * @throws engineer.nightowl.sonos.api.exception.SonosApiError if there is an error from the API.
      */
-    public SonosSuccess seekRelative(final String clientToken, final String sessionId, final String itemId, final String deltaMillis)
+    public SonosSuccess seekRelative(final String clientToken, final String sessionId, final String itemId, final Integer deltaMillis)
             throws SonosApiClientException, SonosApiError
     {
+        validateNotNull(sessionId, "sessionId");
         validateNotNull(itemId);
         validateNotNull(deltaMillis);
         final Map<String, Object> payload = new HashMap<>();
@@ -221,6 +230,7 @@ public class PlaybackSessionResource extends SubscribableResource
     public SonosSuccess suspend(final String clientToken, final String sessionId, final String queueVersion) throws
             SonosApiClientException, SonosApiError
     {
+        validateNotNull(sessionId, "sessionId");
         final Map<String, Object> payload = new HashMap<>();
         if (!SonosUtilityHelper.isEmpty(queueVersion))
         {
