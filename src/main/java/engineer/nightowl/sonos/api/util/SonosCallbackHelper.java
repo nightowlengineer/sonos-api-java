@@ -40,11 +40,11 @@ public class SonosCallbackHelper
             throw new SonosApiClientException("Unsupported execution environment", e);
         }
 
-        messageDigest.update(headers.get("X-Sonos-Event-Seq-Id").getBytes(UTF_8));
-        messageDigest.update(headers.get("X-Sonos-Namespace").getBytes(UTF_8));
-        messageDigest.update(headers.get("X-Sonos-Type").getBytes(UTF_8));
-        messageDigest.update(headers.get("X-Sonos-Target-Type").getBytes(UTF_8));
-        messageDigest.update(headers.get("X-Sonos-Target-Value").getBytes(UTF_8));
+        messageDigest.update(requireHeader(headers, "X-Sonos-Event-Seq-Id").getBytes(UTF_8));
+        messageDigest.update(requireHeader(headers, "X-Sonos-Namespace").getBytes(UTF_8));
+        messageDigest.update(requireHeader(headers, "X-Sonos-Type").getBytes(UTF_8));
+        messageDigest.update(requireHeader(headers, "X-Sonos-Target-Type").getBytes(UTF_8));
+        messageDigest.update(requireHeader(headers, "X-Sonos-Target-Value").getBytes(UTF_8));
         messageDigest.update(apiKey.getBytes(UTF_8));
         messageDigest.update(apiSecret.getBytes(UTF_8));
 
@@ -52,7 +52,28 @@ public class SonosCallbackHelper
 
         logger.debug("Verifying signature: {}", signature);
 
-        return signature.equals(headers.get("X-Sonos-Event-Signature"));
+        return signature.equals(requireHeader(headers, "X-Sonos-Event-Signature"));
+    }
+
+    /**
+     * Fetch a required header value, failing with a clear {@link SonosApiClientException} rather than an
+     * undeclared {@link NullPointerException} if the caller's supplied header map is missing it - this
+     * method processes external (webhook) input, so a missing/misnamed header should never surface as an
+     * unchecked exception.
+     *
+     * @param headers    the header map to look up
+     * @param headerName the header name to require
+     * @return the header value
+     * @throws SonosApiClientException if the header is absent
+     */
+    private static String requireHeader(final Map<String, String> headers, final String headerName) throws SonosApiClientException
+    {
+        final String value = headers.get(headerName);
+        if (value == null)
+        {
+            throw new SonosApiClientException("Missing required header: " + headerName);
+        }
+        return value;
     }
 
     public static Boolean verifySignature(final Map<String, String> headers, final SonosApiClient apiClient) throws SonosApiClientException
@@ -74,8 +95,10 @@ public class SonosCallbackHelper
 
     public static Map<String, String> convertHeadersToMap(final Header[] headers)
     {
+        // HTTP permits repeated header names (e.g. behind a proxy/load balancer) - keep the first value
+        // seen rather than letting Collectors.toMap throw IllegalStateException on a duplicate key.
         return Arrays
                 .stream(headers)
-                .collect(Collectors.toMap(Header::getName, Header::getValue));
+                .collect(Collectors.toMap(Header::getName, Header::getValue, (first, second) -> first));
     }
 }
