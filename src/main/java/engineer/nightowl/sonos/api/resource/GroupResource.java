@@ -48,6 +48,7 @@ public class GroupResource extends SubscribableResource
      */
     public SonosGroups getGroups(final String clientToken, final String householdId) throws SonosApiClientException, SonosApiError
     {
+        validateNotNull(householdId, "householdId");
         return getFromApi(SonosGroups.class, clientToken, String.format("/v1/households/%s/groups", householdId));
     }
 
@@ -56,7 +57,7 @@ public class GroupResource extends SubscribableResource
      *
      * @see <a href="https://developer.sonos.com/reference/control-api/groups/creategroup/">Sonos docs</a>
      * @param clientToken for the user
-     * @param householdId for the household you want to fetch groups and players
+     * @param householdId for the household you want to create the group in
      * @param playerIds that you want to join together
      * @param musicContextGroupId if you want to start/continue playing an audio stream
      * @return information about the newly created group as a {@link engineer.nightowl.sonos.api.domain.SonosGroupInfo} object
@@ -66,6 +67,7 @@ public class GroupResource extends SubscribableResource
     public SonosGroupInfo createGroup(final String clientToken, final String householdId, final List<String> playerIds,
                                       final String musicContextGroupId) throws SonosApiClientException, SonosApiError
     {
+        validateNotNull(householdId, "householdId");
         validateNotNull(playerIds);
         final Map<String, Object> payload = new HashMap<>();
         if (musicContextGroupId != null)
@@ -92,12 +94,20 @@ public class GroupResource extends SubscribableResource
     public SonosGroupInfo modifyGroupMembers(final String clientToken, final String groupId, final List<String> playerIdsToAdd,
                                              final List<String> playerIdsToRemove) throws SonosApiClientException, SonosApiError
     {
+        validateNotNull(groupId, "groupId");
+        final boolean hasAdditions = playerIdsToAdd != null && !playerIdsToAdd.isEmpty();
+        final boolean hasRemovals = playerIdsToRemove != null && !playerIdsToRemove.isEmpty();
+        if (!hasAdditions && !hasRemovals)
+        {
+            throw new SonosApiClientException("At least one of playerIdsToAdd or playerIdsToRemove must be non-empty");
+        }
+
         final Map<String, Object> payload = new HashMap<>();
-        if (playerIdsToAdd != null && !playerIdsToAdd.isEmpty())
+        if (hasAdditions)
         {
             payload.put("playerIdsToAdd", playerIdsToAdd);
         }
-        if (playerIdsToRemove != null && !playerIdsToRemove.isEmpty())
+        if (hasRemovals)
         {
             payload.put("playerIdsToRemove", playerIdsToRemove);
         }
@@ -118,6 +128,7 @@ public class GroupResource extends SubscribableResource
      */
     public SonosGroupInfo setGroupMembers(final String clientToken, final String groupId, final List<String> playerIds) throws SonosApiClientException, SonosApiError
     {
+        validateNotNull(groupId, "groupId");
         validateNotNull(playerIds);
         final Map<String, Object> payload = new HashMap<>();
         payload.put("playerIds", playerIds);
