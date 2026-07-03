@@ -167,15 +167,15 @@ public class SonosMusicServiceAccountMatchRequest implements Validatable
         final List<String> validationErrors = new ArrayList<>();
         if (SonosUtilityHelper.isEmpty(userIdHashCode))
         {
-            validationErrors.add("userIdHashCode cannot be empty when creating/joining a session");
+            validationErrors.add("userIdHashCode cannot be empty when matching a music service account");
         }
         if (SonosUtilityHelper.isEmpty(nickname))
         {
-            validationErrors.add("nickname cannot be empty when creating/joining a session");
+            validationErrors.add("nickname cannot be empty when matching a music service account");
         }
         if (SonosUtilityHelper.isEmpty(serviceId))
         {
-            validationErrors.add("serviceId cannot be empty when creating/joining a session");
+            validationErrors.add("serviceId cannot be empty when matching a music service account");
         }
         if (!validationErrors.isEmpty())
         {
