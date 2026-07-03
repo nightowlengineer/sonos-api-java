@@ -86,8 +86,11 @@ public class SonosApiError extends Exception
     @Override
     public String toString()
     {
+        // Calls the (possibly overridden) getErrorCode() rather than referencing the errorCode field
+        // directly - subclasses store their typed error code in their own shadowed field, which this
+        // class's field does not see.
         return getClass().getSimpleName() + "{" +
-                "errorCode=" + errorCode +
+                "errorCode=" + getErrorCode() +
                 ", reason='" + reason + '\'' +
                 '}';
     }
