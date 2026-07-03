@@ -178,6 +178,22 @@ public class BaseResourceTest
     }
 
     @Test
+    void testNonSuccessStatusWithoutErrorTypeThrowsWithStatus() throws Exception
+    {
+        final byte[] bytes = "Service Unavailable".getBytes(StandardCharsets.UTF_8);
+
+        final HttpResponse<byte[]> mockedResponse = mock(HttpResponse.class);
+        when(mockedResponse.body()).thenReturn(bytes);
+        when(mockedResponse.statusCode()).thenReturn(503);
+        when(mockedResponse.headers()).thenReturn(HttpHeaders.of(Map.of(), (a, b) -> true));
+        when(mockedClient.send(any(HttpRequest.class), ArgumentMatchers.<HttpResponse.BodyHandler<byte[]>>any())).thenReturn(mockedResponse);
+
+        final SonosApiClientException e = assertThrows(SonosApiClientException.class,
+                () -> baseResource.getFromApi(SonosHomeTheaterOptions.class, "token123", "some/test"));
+        assertEquals("Sonos API returned HTTP 503: Service Unavailable", e.getMessage());
+    }
+
+    @Test
     void testApiMismatchHandledCorrectly() throws Exception
     {
         // Test data
@@ -213,6 +229,18 @@ public class BaseResourceTest
         assertEquals("Bearer token123", req.headers().firstValue("Authorization").orElse(null));
 
         assertEquals("/control/api/some/path", req.uri().getPath());
+    }
+
+    @Test
+    void getStandardRequestEncodesPathSegments() throws SonosApiClientException
+    {
+        // An id containing a character that is illegal in a raw URI (here a space) must be percent-encoded
+        // rather than rejected. getPath() returns the decoded path; getRawPath() shows the encoding.
+        final HttpRequest req = baseResource.getStandardRequest("token123", "/v1/players/a b/playerVolume").GET().build();
+
+        assertEquals("api.example.com", req.uri().getHost());
+        assertEquals("/control/api/v1/players/a b/playerVolume", req.uri().getPath());
+        assertEquals("/control/api/v1/players/a%20b/playerVolume", req.uri().getRawPath());
     }
 
     @Test

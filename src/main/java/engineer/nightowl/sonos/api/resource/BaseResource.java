@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
@@ -88,6 +89,18 @@ class BaseResource
         // Get type from Sonos response - not always possible
         final SonosType sonosDeclaredClass = getTypeFromHeader(response);
         final String sonosDeclaredClassName = sonosDeclaredClass == null ? null : sonosDeclaredClass.getClazz().getSimpleName();
+
+        // A non-2xx response that Sonos did not describe with a structured error type would otherwise be
+        // handed to the deserializer for the requested type, producing a confusing "converting response"
+        // parse error. Surface the HTTP status (and a short body snippet) instead. Responses that DO carry
+        // a declared error type still flow through to the SonosApiError handling below, regardless of status.
+        final int status = response.statusCode();
+        final boolean sonosDeclaredError = sonosDeclaredClass != null && SonosType.getErrorTypes().contains(sonosDeclaredClass);
+        if ((status < 200 || status >= 300) && !sonosDeclaredError)
+        {
+            final String detail = isTokenResponse(request) ? "<redacted - token response>" : bodySnippet(bytes);
+            throw new SonosApiClientException(String.format("Sonos API returned HTTP %d: %s", status, detail));
+        }
 
         // If Sonos didn't provide a type, or if one was provided and it matches what we wanted returned, proceed
         if (sonosDeclaredClassName == null || sonosDeclaredClassName.equals(type.getSimpleName()))
@@ -290,14 +303,7 @@ class BaseResource
     HttpRequest.Builder getStandardRequest(final String token, final String path) throws SonosApiClientException
     {
         final SonosApiConfiguration configuration = apiClient.getConfiguration();
-        final URI uri;
-        try
-        {
-            uri = URI.create("https://" + configuration.getControlBaseUrl() + path);
-        } catch (final IllegalArgumentException e)
-        {
-            throw new SonosApiClientException("Invalid URI built", e);
-        }
+        final URI uri = buildControlUri(configuration.getControlBaseUrl(), path);
 
         final HttpRequest.Builder builder = HttpRequest.newBuilder(uri)
                 .setHeader("Authorization", String.format("Bearer %s", token))
@@ -307,6 +313,32 @@ class BaseResource
             builder.timeout(configuration.getRequestTimeout());
         }
         return builder;
+    }
+
+    /**
+     * Build the control API URI for a path, percent-encoding the path segments (which may contain
+     * interpolated resource IDs). {@code controlBaseUrl} bundles the host with a base path, e.g.
+     * {@code api.ws.sonos.com/control/api}, so it is split on the first {@code /} to let the multi-argument
+     * {@link URI} constructor encode the assembled path - unlike {@link URI#create(String)}, which requires
+     * an already-valid URI string and would reject (rather than encode) a stray space or reserved character.
+     *
+     * @param controlBaseUrl the configured control base URL (host + optional base path)
+     * @param path           the resource path, already interpolated with any IDs
+     * @return the assembled, encoded URI
+     * @throws SonosApiClientException if the URI could not be built
+     */
+    private static URI buildControlUri(final String controlBaseUrl, final String path) throws SonosApiClientException
+    {
+        final int firstSlash = controlBaseUrl.indexOf('/');
+        final String host = firstSlash < 0 ? controlBaseUrl : controlBaseUrl.substring(0, firstSlash);
+        final String basePath = firstSlash < 0 ? "" : controlBaseUrl.substring(firstSlash);
+        try
+        {
+            return new URI("https", host, basePath + path, null);
+        } catch (final URISyntaxException e)
+        {
+            throw new SonosApiClientException("Invalid URI built", e);
+        }
     }
 
     /**
@@ -346,6 +378,20 @@ class BaseResource
     {
         final String path = request.uri().getPath();
         return path != null && path.contains("/oauth/access");
+    }
+
+    /**
+     * Decode a response body as text for inclusion in an error message, truncated so an unexpectedly large
+     * body (e.g. an HTML error page from an intermediary) cannot bloat the exception.
+     *
+     * @param bytes the raw response body
+     * @return a short, human-readable snippet of the body
+     */
+    private static String bodySnippet(final byte[] bytes)
+    {
+        final String body = new String(bytes, StandardCharsets.UTF_8);
+        final int maxLength = 512;
+        return body.length() <= maxLength ? body : body.substring(0, maxLength) + "...(truncated)";
     }
 
     /**
