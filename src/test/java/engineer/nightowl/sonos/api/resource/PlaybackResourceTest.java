@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class PlaybackResourceTest extends MockedApiTestSetup
 {
@@ -60,7 +61,11 @@ class PlaybackResourceTest extends MockedApiTestSetup
 
         resource.play("token123", "group1");
 
-        assertEquals("/control/api/v1/groups/group1/playback/play", captureRequest().uri().getPath());
+        final HttpRequest request = captureRequest();
+        assertEquals("/control/api/v1/groups/group1/playback/play", request.uri().getPath());
+        // A no-body POST must not send a bogus request body (e.g. "[]")
+        assertTrue(request.bodyPublisher().isPresent());
+        assertEquals(0, request.bodyPublisher().get().contentLength());
     }
 
     @Test

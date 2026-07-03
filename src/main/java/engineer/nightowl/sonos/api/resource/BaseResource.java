@@ -212,7 +212,10 @@ class BaseResource
      */
     <T> T postToApi(final Class<T> returnType, final String token, final String path) throws SonosApiClientException, SonosApiError
     {
-        return postToApi(returnType, token, path, new String[0]);
+        // Pass null (not an empty array) so isEmpty() sees "no content" and the request is sent with
+        // no body. isEmpty() does not treat a non-null array as empty, so a sentinel like new String[0]
+        // would be serialized to "[]" and sent as a bogus application/json body.
+        return postToApi(returnType, token, path, (Object) null);
     }
 
     /**
