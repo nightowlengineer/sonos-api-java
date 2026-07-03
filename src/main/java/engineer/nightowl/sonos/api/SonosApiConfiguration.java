@@ -150,12 +150,24 @@ public class SonosApiConfiguration
     {
         return "SonosApiConfiguration{" +
                 "applicationId='" + applicationId + '\'' +
-                ", apiKey='" + apiKey + '\'' +
-                ", apiSecret='" + apiSecret + '\'' +
+                ", apiKey='" + mask(apiKey) + '\'' +
+                ", apiSecret='" + mask(apiSecret) + '\'' +
                 ", authBaseUrl='" + authBaseUrl + '\'' +
                 ", controlBaseUrl='" + controlBaseUrl + '\'' +
                 ", clientSideValidationEnabled=" + clientSideValidationEnabled +
                 '}';
+    }
+
+    /**
+     * Mask a secret value for safe inclusion in {@link #toString()} - this object is a natural candidate
+     * for accidental logging, so the raw apiKey/apiSecret should never be printed in full.
+     *
+     * @param secret the value to mask
+     * @return {@code null} if the input is null, otherwise a fixed mask that reveals nothing about the value
+     */
+    private static String mask(final String secret)
+    {
+        return secret == null ? null : "***";
     }
 
     @Override
