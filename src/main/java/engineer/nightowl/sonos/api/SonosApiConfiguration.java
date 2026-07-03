@@ -1,10 +1,11 @@
 package engineer.nightowl.sonos.api;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.http.Header;
 import org.apache.http.message.BasicHeader;
+
+import java.util.Base64;
 
 /**
  * Configuration class to be built up and passed into a {@link engineer.nightowl.sonos.api.SonosApiClient}
@@ -140,7 +141,7 @@ public class SonosApiConfiguration
     public Header getAuthorizationHeader()
     {
         final byte[] authBytes = String.join(":", getApiKey(), getApiSecret()).getBytes();
-        final String authBase64 = Base64.encodeBase64String(authBytes);
+        final String authBase64 = Base64.getEncoder().encodeToString(authBytes);
         final String headerValue = String.join(" ", "Basic", authBase64);
         return new BasicHeader("Authorization", headerValue);
     }
