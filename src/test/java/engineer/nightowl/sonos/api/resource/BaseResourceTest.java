@@ -17,11 +17,13 @@ import java.net.http.HttpHeaders;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -211,6 +213,22 @@ public class BaseResourceTest
         assertEquals("Bearer token123", req.headers().firstValue("Authorization").orElse(null));
 
         assertEquals("/control/api/some/path", req.uri().getPath());
+    }
+
+    @Test
+    void getStandardRequestAppliesConfiguredRequestTimeout() throws SonosApiClientException
+    {
+        when(configuration.getRequestTimeout()).thenReturn(Duration.ofSeconds(30));
+        final HttpRequest req = baseResource.getStandardRequest("token123", "/some/path").GET().build();
+        assertEquals(Duration.ofSeconds(30), req.timeout().orElse(null));
+    }
+
+    @Test
+    void getStandardRequestSkipsNonPositiveRequestTimeout() throws SonosApiClientException
+    {
+        when(configuration.getRequestTimeout()).thenReturn(Duration.ZERO);
+        final HttpRequest req = baseResource.getStandardRequest("token123", "/some/path").GET().build();
+        assertTrue(req.timeout().isEmpty());
     }
 
     @Test

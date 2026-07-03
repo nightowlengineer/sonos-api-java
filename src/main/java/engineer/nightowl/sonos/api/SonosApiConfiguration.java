@@ -4,6 +4,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.Base64;
 
 /**
@@ -20,6 +21,8 @@ public class SonosApiConfiguration
     private String authBaseUrl;
     private String controlBaseUrl;
     private Boolean clientSideValidationEnabled;
+    private Duration connectTimeout;
+    private Duration requestTimeout;
 
     /**
      * <p>Constructor for SonosApiConfiguration.</p>
@@ -124,12 +127,46 @@ public class SonosApiConfiguration
         this.clientSideValidationEnabled = clientSideValidationEnabled;
     }
 
+    /**
+     * <p>Getter for the field <code>connectTimeout</code> - how long to wait when establishing a
+     * connection to Sonos.</p>
+     *
+     * @return the connect timeout
+     */
+    public Duration getConnectTimeout()
+    {
+        return connectTimeout;
+    }
+
+    public void setConnectTimeout(final Duration connectTimeout)
+    {
+        this.connectTimeout = connectTimeout;
+    }
+
+    /**
+     * <p>Getter for the field <code>requestTimeout</code> - how long to wait for a response before a
+     * single request is aborted.</p>
+     *
+     * @return the request timeout
+     */
+    public Duration getRequestTimeout()
+    {
+        return requestTimeout;
+    }
+
+    public void setRequestTimeout(final Duration requestTimeout)
+    {
+        this.requestTimeout = requestTimeout;
+    }
+
 
     public void loadDefaults()
     {
         setAuthBaseUrl("api.sonos.com");
         setControlBaseUrl("api.ws.sonos.com/control/api");
         setClientSideValidationEnabled(Boolean.TRUE);
+        setConnectTimeout(Duration.ofSeconds(10));
+        setRequestTimeout(Duration.ofSeconds(30));
     }
 
     /**
@@ -154,6 +191,8 @@ public class SonosApiConfiguration
                 ", authBaseUrl='" + authBaseUrl + '\'' +
                 ", controlBaseUrl='" + controlBaseUrl + '\'' +
                 ", clientSideValidationEnabled=" + clientSideValidationEnabled +
+                ", connectTimeout=" + connectTimeout +
+                ", requestTimeout=" + requestTimeout +
                 '}';
     }
 
@@ -185,6 +224,8 @@ public class SonosApiConfiguration
                 .append(authBaseUrl, that.authBaseUrl)
                 .append(controlBaseUrl, that.controlBaseUrl)
                 .append(clientSideValidationEnabled, that.clientSideValidationEnabled)
+                .append(connectTimeout, that.connectTimeout)
+                .append(requestTimeout, that.requestTimeout)
                 .isEquals();
     }
 
@@ -198,6 +239,8 @@ public class SonosApiConfiguration
                 .append(authBaseUrl)
                 .append(controlBaseUrl)
                 .append(clientSideValidationEnabled)
+                .append(connectTimeout)
+                .append(requestTimeout)
                 .toHashCode();
     }
 }

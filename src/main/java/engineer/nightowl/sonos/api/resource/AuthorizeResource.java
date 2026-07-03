@@ -144,12 +144,16 @@ public class AuthorizeResource extends BaseResource
             throw new SonosApiClientException("Invalid URI built", e);
         }
 
-        return HttpRequest.newBuilder(uri)
+        final HttpRequest.Builder builder = HttpRequest.newBuilder(uri)
                 .setHeader("Authorization", configuration.getAuthorizationHeader())
                 .setHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8")
                 .setHeader("User-Agent", apiClient.getUserAgent())
-                .POST(HttpRequest.BodyPublishers.ofString(encodeParameters(postParameters), StandardCharsets.UTF_8))
-                .build();
+                .POST(HttpRequest.BodyPublishers.ofString(encodeParameters(postParameters), StandardCharsets.UTF_8));
+        if (isPositive(configuration.getRequestTimeout()))
+        {
+            builder.timeout(configuration.getRequestTimeout());
+        }
+        return builder.build();
     }
 
     /**

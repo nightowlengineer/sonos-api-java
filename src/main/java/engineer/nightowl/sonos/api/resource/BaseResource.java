@@ -19,6 +19,7 @@ import java.net.URI;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.Optional;
 
 /**
@@ -282,9 +283,14 @@ class BaseResource
             throw new SonosApiClientException("Invalid URI built", e);
         }
 
-        return HttpRequest.newBuilder(uri)
+        final HttpRequest.Builder builder = HttpRequest.newBuilder(uri)
                 .setHeader("Authorization", String.format("Bearer %s", token))
                 .setHeader("User-Agent", apiClient.getUserAgent());
+        if (isPositive(configuration.getRequestTimeout()))
+        {
+            builder.timeout(configuration.getRequestTimeout());
+        }
+        return builder;
     }
 
     /**
@@ -311,6 +317,19 @@ class BaseResource
     HttpRequest getDeleteRequest(final String token, final String path) throws SonosApiClientException
     {
         return getStandardRequest(token, path).DELETE().build();
+    }
+
+    /**
+     * A timeout only applies if it is present and strictly positive - {@link HttpRequest.Builder#timeout}
+     * and {@link java.net.http.HttpClient.Builder#connectTimeout} both reject zero/negative durations, so a
+     * non-positive configured value is treated as "no timeout" rather than an error.
+     *
+     * @param timeout the configured timeout, possibly null
+     * @return true if the timeout should be applied
+     */
+    static boolean isPositive(final Duration timeout)
+    {
+        return timeout != null && !timeout.isZero() && !timeout.isNegative();
     }
 
     void validateNotNull(final Object o) throws SonosApiClientException
