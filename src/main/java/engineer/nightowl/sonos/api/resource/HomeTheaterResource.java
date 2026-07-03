@@ -39,6 +39,7 @@ public class HomeTheaterResource extends BaseResource
      */
     public SonosSuccess loadHomeTheaterPlayback(final String clientToken, final String playerId) throws SonosApiClientException, SonosApiError
     {
+        validateNotNull(playerId, "playerId");
         return postToApi(SonosSuccess.class, clientToken, String.format("/v1/players/%s/homeTheater", playerId));
     }
 
@@ -55,6 +56,7 @@ public class HomeTheaterResource extends BaseResource
      */
     public SonosSuccess setTvPowerState(final String clientToken, final String playerId, final SonosTvPowerState tvPowerState) throws SonosApiClientException, SonosApiError
     {
+        validateNotNull(playerId, "playerId");
         validateNotNull(tvPowerState);
         final Map<String, Object> payload = new HashMap<>();
         payload.put("tvPowerState", tvPowerState);
@@ -74,6 +76,7 @@ public class HomeTheaterResource extends BaseResource
      */
     public SonosHomeTheaterOptions getOptions(final String clientToken, final String playerId) throws SonosApiClientException, SonosApiError
     {
+        validateNotNull(playerId, "playerId");
         return getFromApi(SonosHomeTheaterOptions.class, clientToken, String.format("/v1/players/%s/homeTheater/options", playerId));
     }
 
@@ -90,6 +93,7 @@ public class HomeTheaterResource extends BaseResource
      */
     public SonosHomeTheaterOptions setOptions(final String clientToken, final String playerId, final SonosHomeTheaterOptions homeTheaterOptions) throws SonosApiClientException, SonosApiError
     {
+        validateNotNull(playerId, "playerId");
         return postToApi(SonosHomeTheaterOptions.class, clientToken, String.format("/v1/players/%s/homeTheater/options", playerId), homeTheaterOptions);
     }
 }

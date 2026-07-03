@@ -34,6 +34,7 @@ public class AudioClipResource extends BaseResource {
      */
     public SonosAudioClip loadAudioClip(final String clientToken, final String playerId, final SonosAudioClip audioClip)
             throws SonosApiClientException, SonosApiError {
+        validateNotNull(playerId, "playerId");
         return postToApi(SonosAudioClip.class, clientToken, String.format("/v1/players/%s/audioClip", playerId), audioClip);
     }
 
@@ -50,6 +51,8 @@ public class AudioClipResource extends BaseResource {
      */
     public SonosSuccess cancelAudioClip(final String clientToken, final String playerId, final String clipId)
             throws SonosApiClientException, SonosApiError {
+        validateNotNull(playerId, "playerId");
+        validateNotNull(clipId, "clipId");
         return deleteFromApi(SonosSuccess.class, clientToken, String.format("/v1/players/%s/audioClip/%s", playerId, clipId));
     }
 

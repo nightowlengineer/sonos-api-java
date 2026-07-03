@@ -45,6 +45,7 @@ public class GroupVolumeResource extends SubscribableResource
      */
     public SonosGroupVolume getVolume(final String clientToken, final String groupId) throws SonosApiClientException, SonosApiError
     {
+        validateNotNull(groupId, "groupId");
         return getFromApi(SonosGroupVolume.class, clientToken, String.format("/v1/groups/%s/groupVolume", groupId));
     }
 
@@ -61,6 +62,7 @@ public class GroupVolumeResource extends SubscribableResource
      */
     public SonosSuccess setVolume(final String clientToken, final String groupId, final Integer volume) throws SonosApiClientException, SonosApiError
     {
+        validateNotNull(groupId, "groupId");
         validateNotNull(volume);
         final Map<String, Object> payload = new HashMap<>();
         payload.put("volume", volume);
@@ -80,6 +82,7 @@ public class GroupVolumeResource extends SubscribableResource
      */
     public SonosSuccess setRelativeVolume(final String clientToken, final String groupId, final Integer volumeDelta) throws SonosApiClientException, SonosApiError
     {
+        validateNotNull(groupId, "groupId");
         validateNotNull(volumeDelta);
         final Map<String, Object> payload = new HashMap<>();
         payload.put("volumeDelta", volumeDelta);
@@ -99,6 +102,7 @@ public class GroupVolumeResource extends SubscribableResource
      */
     public SonosSuccess setMute(final String clientToken, final String groupId, final Boolean isMuted) throws SonosApiClientException, SonosApiError
     {
+        validateNotNull(groupId, "groupId");
         validateNotNull(isMuted);
         final Map<String, Object> payload = new HashMap<>();
         payload.put("muted", isMuted);

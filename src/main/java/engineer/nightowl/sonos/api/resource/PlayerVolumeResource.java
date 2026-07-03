@@ -47,6 +47,7 @@ public class PlayerVolumeResource extends SubscribableResource
      */
     public SonosPlayerVolume getVolume(final String clientToken, final String playerId) throws SonosApiClientException, SonosApiError
     {
+        validateNotNull(playerId, "playerId");
         return getFromApi(SonosPlayerVolume.class, clientToken, String.format("/v1/players/%s/playerVolume", playerId));
     }
 
@@ -63,6 +64,7 @@ public class PlayerVolumeResource extends SubscribableResource
      */
     public SonosSuccess setMute(final String clientToken, final String playerId, final Boolean isMuted) throws SonosApiClientException, SonosApiError
     {
+        validateNotNull(playerId, "playerId");
         validateNotNull(isMuted);
         final Map<String, Object> payload = new HashMap<>();
         payload.put(MUTED, isMuted);
@@ -83,6 +85,7 @@ public class PlayerVolumeResource extends SubscribableResource
      */
     public SonosSuccess setRelativeVolume(final String clientToken, final String playerId, final Integer volumeDelta, final Boolean isMuted) throws SonosApiClientException, SonosApiError
     {
+        validateNotNull(playerId, "playerId");
         validateNotNull(volumeDelta);
         final Map<String, Object> payload = new HashMap<>();
         payload.put("volumeDelta", volumeDelta);
@@ -107,6 +110,7 @@ public class PlayerVolumeResource extends SubscribableResource
      */
     public SonosSuccess setVolume(final String clientToken, final String playerId, final Integer volume, final Boolean isMuted) throws SonosApiClientException, SonosApiError
     {
+        validateNotNull(playerId, "playerId");
         validateNotNull(volume);
         final Map<String, Object> payload = new HashMap<>();
         payload.put("volume", volume);

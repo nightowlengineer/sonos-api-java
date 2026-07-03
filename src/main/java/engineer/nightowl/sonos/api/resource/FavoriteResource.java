@@ -47,6 +47,7 @@ public class FavoriteResource extends SubscribableResource
      */
     public SonosFavoriteList getFavorites(final String clientToken, final String householdId) throws SonosApiClientException, SonosApiError
     {
+        validateNotNull(householdId, "householdId");
         return getFromApi(SonosFavoriteList.class, clientToken, String.format("/v1/households/%s/favorites", householdId));
     }
 
@@ -66,6 +67,7 @@ public class FavoriteResource extends SubscribableResource
     public SonosSuccess loadFavorite(final String clientToken, final String groupId, final String favoriteId, final Boolean playOnCompletion,
                                      final SonosPlayMode playMode) throws SonosApiClientException, SonosApiError
     {
+        validateNotNull(groupId, "groupId");
         validateNotNull(favoriteId, "favoriteId");
         final Map<String, Object> payload = new HashMap<>();
         if (playOnCompletion != null)

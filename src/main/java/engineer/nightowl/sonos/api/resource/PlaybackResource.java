@@ -46,6 +46,7 @@ public class PlaybackResource extends SubscribableResource
      */
     public SonosPlaybackStatus getPlaybackStatus(final String clientToken, final String groupId) throws SonosApiClientException, SonosApiError
     {
+        validateNotNull(groupId, "groupId");
         return getFromApi(SonosPlaybackStatus.class, clientToken, String.format("/v1/groups/%s/playback", groupId));
     }
 
@@ -64,6 +65,7 @@ public class PlaybackResource extends SubscribableResource
     public SonosSuccess loadLineIn(final String clientToken, final String groupId, final String deviceId,
                                    final Boolean playOnCompletion) throws SonosApiClientException, SonosApiError
     {
+        validateNotNull(groupId, "groupId");
         final Map<String, Object> payload = new HashMap<>();
         if (deviceId != null)
         {
@@ -89,6 +91,7 @@ public class PlaybackResource extends SubscribableResource
      */
     public SonosSuccess play(final String clientToken, final String groupId) throws SonosApiClientException, SonosApiError
     {
+        validateNotNull(groupId, "groupId");
         return postToApi(SonosSuccess.class, clientToken, String.format("/v1/groups/%s/playback/play", groupId));
     }
 
@@ -104,6 +107,7 @@ public class PlaybackResource extends SubscribableResource
      */
     public SonosSuccess pause(final String clientToken, final String groupId) throws SonosApiClientException, SonosApiError
     {
+        validateNotNull(groupId, "groupId");
         return postToApi(SonosSuccess.class, clientToken, String.format("/v1/groups/%s/playback/pause", groupId));
     }
 
@@ -122,6 +126,7 @@ public class PlaybackResource extends SubscribableResource
     public SonosSuccess seek(final String clientToken, final String groupId, final String itemId,
                              final Integer positionMillis) throws SonosApiClientException, SonosApiError
     {
+        validateNotNull(groupId, "groupId");
         validateNotNull(positionMillis);
         final Map<String, Object> payload = new HashMap<>();
         if (itemId != null)
@@ -148,6 +153,7 @@ public class PlaybackResource extends SubscribableResource
     public SonosSuccess seekRelative(final String clientToken, final String groupId, final String itemId,
                                      final Integer deltaMillis) throws SonosApiClientException, SonosApiError
     {
+        validateNotNull(groupId, "groupId");
         validateNotNull(deltaMillis);
         final Map<String, Object> payload = new HashMap<>();
         if (itemId != null)
@@ -173,6 +179,7 @@ public class PlaybackResource extends SubscribableResource
      */
     public SonosSuccess setPlayModes(final String clientToken, final String groupId, final SonosPlayMode playMode) throws SonosApiClientException, SonosApiError
     {
+        validateNotNull(groupId, "groupId");
         validateNotNull(playMode);
         final Map<String, Object> payload = new HashMap<>();
         payload.put("playModes", playMode);
@@ -191,6 +198,7 @@ public class PlaybackResource extends SubscribableResource
      */
     public SonosSuccess skipToNextTrack(final String clientToken, final String groupId) throws SonosApiClientException, SonosApiError
     {
+        validateNotNull(groupId, "groupId");
         return postToApi(SonosSuccess.class, clientToken, String.format("/v1/groups/%s/playback/skipToNextTrack", groupId));
     }
 
@@ -206,6 +214,7 @@ public class PlaybackResource extends SubscribableResource
      */
     public SonosSuccess skipToPreviousTrack(final String clientToken, final String groupId) throws SonosApiClientException, SonosApiError
     {
+        validateNotNull(groupId, "groupId");
         return postToApi(SonosSuccess.class, clientToken, String.format("/v1/groups/%s/playback/skipToPreviousTrack", groupId));
     }
 
@@ -223,6 +232,7 @@ public class PlaybackResource extends SubscribableResource
      */
     public SonosSuccess togglePlayPause(final String clientToken, final String groupId) throws SonosApiClientException, SonosApiError
     {
+        validateNotNull(groupId, "groupId");
         return postToApi(SonosSuccess.class, clientToken, String.format("/v1/groups/%s/playback/togglePlayPause", groupId));
     }
 }

@@ -30,6 +30,7 @@ public class SettingsResource extends BaseResource
      */
     public SonosPlayerSettings getSettings(final String clientToken, final String playerId) throws SonosApiClientException, SonosApiError
     {
+        validateNotNull(playerId, "playerId");
         return getFromApi(SonosPlayerSettings.class, clientToken, String.format("/v1/players/%s/settings/player", playerId));
     }
 
@@ -46,6 +47,7 @@ public class SettingsResource extends BaseResource
      */
     public SonosSuccess setSettings(final String clientToken, final String playerId, final SonosPlayerSettings sonosPlayerSettings) throws SonosApiClientException, SonosApiError
     {
+        validateNotNull(playerId, "playerId");
         return postToApi(SonosSuccess.class, clientToken, String.format("/v1/players/%s/settings/player", playerId), sonosPlayerSettings);
     }
 }

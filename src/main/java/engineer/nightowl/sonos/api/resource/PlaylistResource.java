@@ -47,6 +47,7 @@ public class PlaylistResource extends SubscribableResource
      */
     public SonosPlaylistList getPlaylists(final String clientToken, final String householdId) throws SonosApiClientException, SonosApiError
     {
+        validateNotNull(householdId, "householdId");
         return getFromApi(SonosPlaylistList.class, clientToken, String.format("/v1/households/%s/playlists", householdId));
     }
 
@@ -63,6 +64,8 @@ public class PlaylistResource extends SubscribableResource
      */
     public SonosPlaylist getPlaylist(final String clientToken, final String householdId, final String playlistId) throws SonosApiClientException, SonosApiError
     {
+        validateNotNull(householdId, "householdId");
+        validateNotNull(playlistId, "playlistId");
         return getFromApi(SonosPlaylist.class, clientToken, String.format("/v1/households/%s/playlists/%s", householdId, playlistId));
     }
 
@@ -82,6 +85,7 @@ public class PlaylistResource extends SubscribableResource
     public SonosSuccess loadPlaylist(final String clientToken, final String groupId, final String playlistId, final Boolean playOnCompletion,
                                      final SonosPlayMode playMode) throws SonosApiClientException, SonosApiError
     {
+        validateNotNull(groupId, "groupId");
         validateNotNull(playlistId, "playlistId");
         final Map<String, Object> payload = new HashMap<>();
         if (playOnCompletion != null)
