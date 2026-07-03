@@ -38,6 +38,7 @@ public class MusicServiceAccountsResource extends BaseResource
                                           final SonosMusicServiceAccountMatchRequest request)
             throws SonosApiClientException, SonosApiError
     {
-        return postToApi(SonosMusicServiceAccount.class, clientToken, String.format("/v1/household/%s/musicServiceAccounts/match", householdId), request);
+        validateNotNull(householdId, "householdId");
+        return postToApi(SonosMusicServiceAccount.class, clientToken, String.format("/v1/households/%s/musicServiceAccounts/match", householdId), request);
     }
 }
